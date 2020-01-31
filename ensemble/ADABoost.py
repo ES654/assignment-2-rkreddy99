@@ -31,30 +31,30 @@ class AdaBoostClassifier():
             y_hat = pd.Series(self.base_estimator.predict(X))
 
             assert(y_hat.size == y.size)
-            ind = [] #wrongly predictes indices
-            indc = [] #indices
+            indw = [] #wrongly predicted indices
+            indt = [] #correctly predicted indices
 
             for j in range(y_hat.size):
-                indc.append(j)
                 if y[j]!=y_hat[j]:
-                    ind.append(j)
-            
+                    indw.append(j)
+                else:
+                    indt.append(j)
             err = 0
             
-            for i in ind:
+            for i in indw:
                 err+=(weights[i]/w)
             
             alpha = 0.5*math.log((1-err)/err)
-            diff = set(indc).difference(set(ind))
             
-            for i in diff:
+            for i in indt:
                 weights[i] = weights[i]*math.exp(-1*alpha)
-            for i in ind:
+            for i in indw:
                 weights[i] = weights[i]*math.exp(alpha)
             
             trees.append(alpha)
             trees.append(tree)
         return trees
+    
     def predict(self, X):
         """
         Input:
@@ -62,14 +62,16 @@ class AdaBoostClassifier():
         Output:
         y: pd.Series with rows corresponding to output variable. THe output variable in a row is the prediction for sample in corresponding row in X.
         """
-        output = 0
         trees = self.trees
+        d={}
         for i in range(0,self.n_estimators*2,2):
-            output+=trees[i]*trees[i+1]
-        if output<=0:
-            return -1
-        else:
-            return 1
+            if trees[i+1] in d.keys():
+                d[trees[i+1]]+=trees[i]
+            else:
+                d[trees[i+1]] = trees[i]
+        predicted = max(d, key=d.get)
+        return predicted
+
 
     def plot(self):
         """
