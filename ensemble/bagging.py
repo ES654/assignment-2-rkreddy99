@@ -6,8 +6,9 @@ class BaggingClassifier():
                                You can pass the object of the estimator class
         :param n_estimators: The number of estimators/models in ensemble.
         '''
-
-        pass
+        self.base_estimator = base_estimator
+        self.n_estimators = n_estimators
+        
 
     def fit(self, X, y):
         """
@@ -16,7 +17,7 @@ class BaggingClassifier():
         X: pd.DataFrame with rows as samples and columns as features (shape of X is N X P) where N is the number of samples and P is the number of columns.
         y: pd.Series with rows corresponding to output variable (shape of Y is N)
         """
-        pass
+        
 
     def predict(self, X):
         """

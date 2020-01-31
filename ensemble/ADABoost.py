@@ -1,3 +1,6 @@
+import math
+from tree.base import DecisionTree
+import pandas as pd
 
 class AdaBoostClassifier():
     def __init__(self, base_estimator, n_estimators=3): # Optional Arguments: Type of estimator
@@ -7,8 +10,10 @@ class AdaBoostClassifier():
                                You can pass the object of the estimator class
         :param n_estimators: The maximum number of estimators at which boosting is terminated. In case of perfect fit, the learning procedure may be stopped early.
         '''
-
-        pass
+        self.base_estimator = base_estimator
+        self.n_estimators = n_estimators
+        self.trees = []
+        
 
     def fit(self, X, y):
         """
@@ -17,8 +22,39 @@ class AdaBoostClassifier():
         X: pd.DataFrame with rows as samples and columns as features (shape of X is N X P) where N is the number of samples and P is the number of columns.
         y: pd.Series with rows corresponding to output variable (shape of Y is N)
         """
-        pass
+        l = X.shape[0]
+        weights = [1/l]*l
+        w=sum(weights)
+        trees = self.trees
+        for i in range(self.n_estimators):
+            tree = self.base_estimator.fit(X,y,weights)
+            y_hat = pd.Series(self.base_estimator.predict(X))
 
+            assert(y_hat.size == y.size)
+            ind = [] #wrongly predictes indices
+            indc = [] #indices
+
+            for j in range(y_hat.size):
+                indc.append(j)
+                if y[j]!=y_hat[j]:
+                    ind.append(j)
+            
+            err = 0
+            
+            for i in ind:
+                err+=(weights[i]/w)
+            
+            alpha = 0.5*math.log((1-err)/err)
+            diff = set(indc).difference(set(ind))
+            
+            for i in diff:
+                weights[i] = weights[i]*math.exp(-1*alpha)
+            for i in ind:
+                weights[i] = weights[i]*math.exp(alpha)
+            
+            trees.append(alpha)
+            trees.append(tree)
+        return trees
     def predict(self, X):
         """
         Input:
@@ -26,7 +62,14 @@ class AdaBoostClassifier():
         Output:
         y: pd.Series with rows corresponding to output variable. THe output variable in a row is the prediction for sample in corresponding row in X.
         """
-        pass
+        output = 0
+        trees = self.trees
+        for i in range(0,self.n_estimators*2,2):
+            output+=trees[i]*trees[i+1]
+        if output<=0:
+            return -1
+        else:
+            return 1
 
     def plot(self):
         """
@@ -42,4 +85,5 @@ class AdaBoostClassifier():
 
         This function should return [fig1, fig2]
         """
+        
         pass

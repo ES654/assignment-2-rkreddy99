@@ -15,8 +15,12 @@ def accuracy(y_hat, y):
     ensure that the function does not fail in corner cases.
     """
     assert(y_hat.size == y.size)
-    # TODO: Write here
-    pass
+    acc = 0
+    for i in range(y_hat.size):
+        if y_hat[i]==y[i]:
+            acc+=1
+    acc = acc/y.size
+    return acc
 
 def precision(y_hat, y, cls):
     """
@@ -29,7 +33,15 @@ def precision(y_hat, y, cls):
     Output:
     > Returns the precision as float
     """
-    pass
+    q=0
+    w=0
+    for i in range(len(y)):
+        if y_hat.iloc[i]==y[i]  and y_hat.iloc[i]==cls:
+            q+=1
+        if y_hat.iloc[i]==cls:
+            w+=1
+    pre = q/max(w,1)
+    return pre
 
 def recall(y_hat, y, cls):
     """
@@ -42,29 +54,37 @@ def recall(y_hat, y, cls):
     Output:
     > Returns the recall as float
     """
-    pass
+    e=0
+    r=0
+    for i in range(len(y)):
+        if y_hat.iloc[i]==y.iloc[i] and y.iloc[i]==cls:
+            e+=1
+        if y.iloc[i]==cls:
+            r+=1
+    rec = e/r
+    return rec
 
-def rmse(y_hat, y):
-    """
-    Function to calculate the root-mean-squared-error(rmse)
+# def rmse(y_hat, y):
+#     """
+#     Function to calculate the root-mean-squared-error(rmse)
 
-    Inputs:
-    > y_hat: pd.Series of predictions
-    > y: pd.Series of ground truth
-    Output:
-    > Returns the rmse as float
-    """
+#     Inputs:
+#     > y_hat: pd.Series of predictions
+#     > y: pd.Series of ground truth
+#     Output:
+#     > Returns the rmse as float
+#     """
 
-    pass
+#     pass
 
-def mae(y_hat, y):
-    """
-    Function to calculate the mean-absolute-error(mae)
+# def mae(y_hat, y):
+#     """
+#     Function to calculate the mean-absolute-error(mae)
 
-    Inputs:
-    > y_hat: pd.Series of predictions
-    > y: pd.Series of ground truth
-    Output:
-    > Returns the mae as float
-    """
-    pass
+#     Inputs:
+#     > y_hat: pd.Series of predictions
+#     > y: pd.Series of ground truth
+#     Output:
+#     > Returns the mae as float
+#     """
+#     pass
