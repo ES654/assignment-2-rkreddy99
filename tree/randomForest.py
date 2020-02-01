@@ -28,16 +28,16 @@ class RandomForestClassifier():
         self.node = []
         for i in range(self.n_estimators):
             clone = copy.deepcopy(self.tree)
-            X1 = pd.DataFrame({}, columns = [i for i in X])
-            y1 = pd.Series([])
-            for j in range(X.shape[0]):
-                ind = random.randint(0,X.shape[0]-1)
-                X1.loc[j], y1.loc[j] = X.iloc[ind], y.iloc[ind]
+            Xtemp = X.copy()
+            Xtemp['kljh'] = y.copy()
+            X1 = Xtemp.copy().sample(frac=1,replace=True).reset_index(drop=True)
+            y1 = X1['kljh'].copy()
+            X1 = X1.drop(['kljh'], axis=1)
             col = list(X.columns)
             num = int(len(col)**0.5)
             attr = random.sample(col,num)
             self.node.append(attr)
-            X2 = X[attr].copy()
+            X2 = X1[attr].copy()
             clone.fit(X2,y1)
             self.a.append(clone)
     def predict(self, X):

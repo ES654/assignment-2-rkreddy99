@@ -2,6 +2,7 @@ import math
 from tree.base import DecisionTree
 import pandas as pd
 import copy
+import numpy as np
 
 class AdaBoostClassifier():
     def __init__(self, base_estimator, n_estimators=3): # Optional Arguments: Type of estimator
@@ -14,7 +15,7 @@ class AdaBoostClassifier():
         self.base_estimator = base_estimator
         self.n_estimators = n_estimators
         self.trees = []
-        
+        self.alph=[]
 
     def fit(self, X, y):
         """
@@ -25,12 +26,12 @@ class AdaBoostClassifier():
         """
         l = X.shape[0]
         weights = [1/l]*l
-        w=sum(weights)
+    
         for i in range(self.n_estimators):
             clone = copy.deepcopy(self.base_estimator)
             tr = clone.fit(X,y,weights)
             y_hat = pd.Series(clone.predict(X))
-
+            w=sum(weights)
             assert(y_hat.size == y.size)
             indw = [] #wrongly predicted indices
             indt = [] #correctly predicted indices
@@ -41,19 +42,22 @@ class AdaBoostClassifier():
                 else:
                     indt.append(j)
             err = 0
-            
             for i in indw:
                 err+=(weights[i]/w)
-            
+            # print(err)
             alpha = 0.5*math.log((1-err)/err)
-            
+            # print(weights)
             for i in indt:
                 weights[i] = weights[i]*math.exp(-1*alpha)
             for i in indw:
                 weights[i] = weights[i]*math.exp(alpha)
-            
+            weig = sum(weights)
+            we = np.array(weights)/weig
+            weights = list(we)
             self.trees.append(alpha)
+            self.alph.append(alpha)
             self.trees.append(tr)
+       
     
     def predict(self, X):
         """
@@ -79,9 +83,9 @@ class AdaBoostClassifier():
             d = {}
             for j in range(len(pred)):
                 if pred[j][i] in d:
-                    d[pred[j][i]]+=1
+                    d[pred[j][i]]+=self.alph[j]
                 else:
-                    d[pred[j][i]] = 1
+                    d[pred[j][i]] = self.alph[j]
             y_hat.append(max(d,key=d.get))
         y_hat = pd.Series(y_hat)
         return y_hat

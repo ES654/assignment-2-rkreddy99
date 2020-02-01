@@ -21,7 +21,7 @@ N = 30
 P = 5
 X = pd.DataFrame(np.random.randn(N, P))
 y = pd.Series(np.random.randint(P, size = N), dtype="category")
-n_estimators = 100
+n_estimators = 10
 for criteria in ['entropy', 'gini']:
     Classifier_RF = RandomForestClassifier(n_estimators=n_estimators, criterion = criteria, max_depth=None)
     Classifier_RF.fit(X, y)

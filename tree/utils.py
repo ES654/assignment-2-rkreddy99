@@ -19,8 +19,8 @@ def entropy(Y,W):
     entro = 0
     w = sum(W)
     for i in d:
-        entro += (-1*d[i]/w)*math.log(d[i]/w,2)
-    
+        entro += (d[i]/w)*math.log(d[i]/w,2)
+    entro = -entro
     return entro
 
 def gini_index(Y):

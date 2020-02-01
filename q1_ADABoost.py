@@ -31,6 +31,16 @@ y = pd.Series(np.random.randint(NUM_OP_CLASSES, size = N), dtype="category")
 
 criteria = 'information_gain'
 tree = DecisionTree(criterion=criteria)
+re = X.shape[0]
+img_weights = [1/re]*re
+tree.fit(X,y,img_weights)
+yhat = pd.Series(tree.predict(X))
+print('Criteria :', criteria)
+print('Accuracy: ', accuracy(yhat, y))
+for cls in y.unique():
+    print("***Class :"+str(cls)+"***")
+    print('Precision: ', precision(yhat, y, cls))
+    print('Recall: ', recall(yhat, y, cls))
 Classifier_AB = AdaBoostClassifier(base_estimator=tree, n_estimators=n_estimators )
 Classifier_AB.fit(X, y)
 y_hat = Classifier_AB.predict(X)
@@ -38,6 +48,7 @@ y_hat = Classifier_AB.predict(X)
 print('Criteria :', criteria)
 print('Accuracy: ', accuracy(y_hat, y))
 for cls in y.unique():
+    print("***Class :"+str(cls)+"***")
     print('Precision: ', precision(y_hat, y, cls))
     print('Recall: ', recall(y_hat, y, cls))
 
