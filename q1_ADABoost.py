@@ -63,8 +63,8 @@ for i in range(5):
   d[col[i]] = a[i]
 X = X.append(d, ignore_index=True)
 
-X.drop(["sepal length"], axis=1)
-X.drop(["petal length"], axis=1)
+X = X.drop(["sepal length"], axis=1)
+X = X.drop(["petal length"], axis=1)
 
 
 for i in range(X["label"].size):
@@ -76,16 +76,16 @@ np.random.shuffle(ind)
 Xtemp = X
 for i in range(len(ind)):
     X.loc[i] = Xtemp.loc[ind[i]]
-X.reset_index(drop=True)
+X = X.reset_index(drop=True)
 y = X["label"]
 
 X_train = X.loc[:89].reset_index(drop=True)
 y_train = X_train["label"]
-X_train.drop(["label"], axis=1)
+X_train = X_train.drop(["label"], axis=1)
 
 X_test = X[90:].reset_index(drop=True)
 y_test = X_test["label"]
-X_test.drop(["label"], axis=1)
+X_train = X_test.drop(["label"], axis=1)
 
 criteria = 'information_gain'
 tree = DecisionTree(criterion=criteria)

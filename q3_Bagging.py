@@ -25,10 +25,11 @@ NUM_OP_CLASSES = 2
 n_estimators = 3
 X = pd.DataFrame(np.abs(np.random.randn(N, P)))
 y = pd.Series(np.random.randint(NUM_OP_CLASSES, size = N), dtype="category")
-
+# print(X)
 tree = DecisionTreeClassifier(criterion="entropy")
 Classifier_B = BaggingClassifier(base_estimator=tree, n_estimators=n_estimators )
 Classifier_B.fit(X, y)
+print(X.shape)
 y_hat = Classifier_B.predict(X)
 # [fig1, fig2] = Classifier_B.plot()
 print('Criteria : entropy')

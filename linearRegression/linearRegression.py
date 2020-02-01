@@ -24,6 +24,7 @@ class LinearRegression():
             X = np.concatenate((a,X), axis=1)
         inv = np.linalg.pinv(X.T @ X)
         self.theta = inv @ X.T @ y
+        return self.theta
 
 
     def predict(self, X):

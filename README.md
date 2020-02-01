@@ -14,7 +14,7 @@ Q3 b) Reproduce slides 13 to 17 from ensemble learning lecture. This would invol
 
 Q4 a) Implement RandomForestClassifier() and RandomForestRegressor() classes in `tree/randomForest.py`. Use `q4_RandomForest.py` for testing.
 
-Q4 b) Generate the plots for Iris data set. Fix a random seed of 42. Shuffle the dataset according to this random seed. Use the first 60% of the data for training and last 40% of the data set for testing. Using sepal width and petal width as the two features. Include you code in `random_forest_iris.py`
+Q4 b) Generate the plots for Iris data set. Fix a random seed of 42. Shuffle the dataset according to this random seed. Use the first 60% of the data for training and last 40% of the data set for testing. Using sepal width and petal width as the two features. Include your code in `random_forest_iris.py`
 
 
 You can answer the subjectve questions (timing analysis, displaying plots) by editing `assignment_q<question-number>_subjective_answers.md`

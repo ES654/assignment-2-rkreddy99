@@ -1,5 +1,6 @@
 import pandas as pd
 import copy
+import random
 class BaggingClassifier():
     def __init__(self, base_estimator, n_estimators=100):
         '''
@@ -20,15 +21,13 @@ class BaggingClassifier():
         """
         self.a=[]
         for i in range(self.n_estimators):
-            Xt = X
-            yt = y
             clone = copy.deepcopy(self.base_estimator)
-            yt = list(yt)
-            Xt["label"] = yt
-            Xt.sample(frac=1, replace=True).reset_index(drop=True)
-            yt = Xt['label'].reset_index(drop=True)
-            Xt.drop(["label"],axis=True)
-            self.a.append(clone.fit(Xt,yt))
+            X1 = pd.DataFrame({}, columns = [i for i in X])
+            y1 = pd.Series([])
+            for j in range(X.shape[0]):
+                ind = random.randint(0,X.shape[0]-1)
+                X1.loc[j], y1.loc[j] = X.iloc[ind], y.iloc[ind]
+            self.a.append(clone.fit(X1,y1))
 
     def predict(self, X):
         """

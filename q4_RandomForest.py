@@ -21,9 +21,9 @@ N = 30
 P = 5
 X = pd.DataFrame(np.random.randn(N, P))
 y = pd.Series(np.random.randint(P, size = N), dtype="category")
-
-for criteria in ['information_gain', 'gini_index']:
-    Classifier_RF = RandomForestClassifier(10, criterion = criteria)
+n_estimators = 100
+for criteria in ['entropy', 'gini']:
+    Classifier_RF = RandomForestClassifier(n_estimators=n_estimators, criterion = criteria, max_depth=None)
     Classifier_RF.fit(X, y)
     y_hat = Classifier_RF.predict(X)
     Classifier_RF.plot()
