@@ -48,10 +48,6 @@ class DecisionTree():
             div = (X1[i] + X1[i+1])/2
             s.append(information_gain(N, h[1], div))
 
-        s = pd.Series(s)
-        s.fillna(-9999999999)
-        s = list(s)
-
         div_ind = s.index(max(s))%(l-1) 
         div_attr = h[s.index(max(s))//(l-1)]
 
@@ -68,9 +64,7 @@ class DecisionTree():
         op2 = max(set(output2), key=output2.count)
 
         self.tree[div_attr] = [div_val, op1, op2]
-
         return self.tree
-
     def predict(self, X):
         """
         Funtion to run the decision tree on a data point

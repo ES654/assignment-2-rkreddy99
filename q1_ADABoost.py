@@ -80,12 +80,12 @@ X.reset_index(drop=True)
 y = X["label"]
 
 X_train = X.loc[:89].reset_index(drop=True)
-y_train = X_train["labels"]
-X_train.drop(["labels"], axis=1)
+y_train = X_train["label"]
+X_train.drop(["label"], axis=1)
 
 X_test = X[90:].reset_index(drop=True)
-y_test = X_test["labels"]
-X_test.drop(["labels"], axis=1)
+y_test = X_test["label"]
+X_test.drop(["label"], axis=1)
 
 criteria = 'information_gain'
 tree = DecisionTree(criterion=criteria)

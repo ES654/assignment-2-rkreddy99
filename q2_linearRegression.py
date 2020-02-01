@@ -11,12 +11,17 @@ N = 30
 P = 5
 X = pd.DataFrame(np.random.randn(N, P))
 y = pd.Series(np.random.randn(N))
-
+print('--------------------------------------------')
+print('Linear regression on random data')
+print('--------------------------------------------')
 for fit_intercept in [True, False]:
+    print('-------------------------')
+    print('fit_intercept : '+str(fit_intercept))
+    print('-------------------------')
     LR = LinearRegression(fit_intercept=fit_intercept)
     LR.fit(X, y)
     y_hat = LR.predict(X)
-    LR.plot()
+    #LR.plot()
 
     print('RMSE: ', rmse(y_hat, y))
     print('MAE: ', mae(y_hat, y))

@@ -35,10 +35,13 @@ def precision(y_hat, y, cls):
     """
     q=0
     w=0
+    y = list(y)
+    y_hat = list(y_hat)
+
     for i in range(len(y)):
-        if y_hat.iloc[i]==y[i]  and y_hat.iloc[i]==cls:
+        if y_hat[i]==y[i] and y_hat[i]==cls:
             q+=1
-        if y_hat.iloc[i]==cls:
+        if y_hat[i]==cls:
             w+=1
     pre = q/max(w,1)
     return pre
@@ -56,35 +59,47 @@ def recall(y_hat, y, cls):
     """
     e=0
     r=0
+    y = list(y)
+    y_hat = list(y_hat)
     for i in range(len(y)):
-        if y_hat.iloc[i]==y.iloc[i] and y.iloc[i]==cls:
+        if y_hat[i]==y[i] and y[i]==cls:
             e+=1
-        if y.iloc[i]==cls:
+        if y[i]==cls:
             r+=1
     rec = e/r
     return rec
 
-# def rmse(y_hat, y):
-#     """
-#     Function to calculate the root-mean-squared-error(rmse)
+def rmse(y_hat, y):
+    """
+    Function to calculate the root-mean-squared-error(rmse)
+    Inputs:
+    > y_hat: pd.Series of predictions
+    > y: pd.Series of ground truth
+    Output:
+    > Returns the rmse as float
+    """
+    rse=0
+    y = list(y)
+    y_hat = list(y_hat)
+    for i in range(len(y)):
+        rse+=(y[i] - y_hat[i])**2
+    rse = rse/len(y)
+    rse = rse**0.5
+    return rse
 
-#     Inputs:
-#     > y_hat: pd.Series of predictions
-#     > y: pd.Series of ground truth
-#     Output:
-#     > Returns the rmse as float
-#     """
-
-#     pass
-
-# def mae(y_hat, y):
-#     """
-#     Function to calculate the mean-absolute-error(mae)
-
-#     Inputs:
-#     > y_hat: pd.Series of predictions
-#     > y: pd.Series of ground truth
-#     Output:
-#     > Returns the mae as float
-#     """
-#     pass
+def mae(y_hat, y):
+    """
+    Function to calculate the mean-absolute-error(mae)
+    Inputs:
+    > y_hat: pd.Series of predictions
+    > y: pd.Series of ground truth
+    Output:
+    > Returns the mae as float
+    """
+    me=0
+    y = list(y)
+    y_hat = list(y_hat)
+    for i in range(len(y)):
+        me+=abs(y_hat[i] - y[i])
+    me = me/len(y)
+    return me

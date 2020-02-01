@@ -1,4 +1,5 @@
-
+import pandas as pd
+import copy
 class BaggingClassifier():
     def __init__(self, base_estimator, n_estimators=100):
         '''
@@ -17,7 +18,17 @@ class BaggingClassifier():
         X: pd.DataFrame with rows as samples and columns as features (shape of X is N X P) where N is the number of samples and P is the number of columns.
         y: pd.Series with rows corresponding to output variable (shape of Y is N)
         """
-        
+        self.a=[]
+        for i in range(self.n_estimators):
+            Xt = X
+            yt = y
+            clone = copy.deepcopy(self.base_estimator)
+            yt = list(yt)
+            Xt["label"] = yt
+            Xt.sample(frac=1, replace=True).reset_index(drop=True)
+            yt = Xt['label'].reset_index(drop=True)
+            Xt.drop(["label"],axis=True)
+            self.a.append(clone.fit(Xt,yt))
 
     def predict(self, X):
         """
@@ -27,7 +38,20 @@ class BaggingClassifier():
         Output:
         y: pd.Series with rows corresponding to output variable. THe output variable in a row is the prediction for sample in corresponding row in X.
         """
-        pass
+        pred = []
+        y_hat = []
+        for tree in self.a:
+            pred.append(list(tree.predict(X)))
+        for i in range(len(pred[0])):
+            d = {}
+            for j in range(len(pred)):
+                if pred[j][i] in d:
+                    d[pred[j][i]]+=1
+                else:
+                    d[pred[j][i]] = 1
+            y_hat.append(max(d,key=d.get))
+        y_hat = pd.Series(y_hat)
+        return y_hat
 
     def plot(self):
         """

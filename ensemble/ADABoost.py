@@ -1,6 +1,7 @@
 import math
 from tree.base import DecisionTree
 import pandas as pd
+import copy
 
 class AdaBoostClassifier():
     def __init__(self, base_estimator, n_estimators=3): # Optional Arguments: Type of estimator
@@ -25,10 +26,10 @@ class AdaBoostClassifier():
         l = X.shape[0]
         weights = [1/l]*l
         w=sum(weights)
-        trees = self.trees
         for i in range(self.n_estimators):
-            tree = self.base_estimator.fit(X,y,weights)
-            y_hat = pd.Series(self.base_estimator.predict(X))
+            clone = copy.deepcopy(self.base_estimator)
+            tr = clone.fit(X,y,weights)
+            y_hat = pd.Series(clone.predict(X))
 
             assert(y_hat.size == y.size)
             indw = [] #wrongly predicted indices
@@ -51,9 +52,8 @@ class AdaBoostClassifier():
             for i in indw:
                 weights[i] = weights[i]*math.exp(alpha)
             
-            trees.append(alpha)
-            trees.append(tree)
-        return trees
+            self.trees.append(alpha)
+            self.trees.append(tr)
     
     def predict(self, X):
         """
@@ -62,15 +62,30 @@ class AdaBoostClassifier():
         Output:
         y: pd.Series with rows corresponding to output variable. THe output variable in a row is the prediction for sample in corresponding row in X.
         """
-        trees = self.trees
-        d={}
+        pred = []
+        y_hat = []
         for i in range(0,self.n_estimators*2,2):
-            if trees[i+1] in d.keys():
-                d[trees[i+1]]+=trees[i]
-            else:
-                d[trees[i+1]] = trees[i]
-        predicted = max(d, key=d.get)
-        return predicted
+            yhat = []
+            tree = self.trees[i+1]
+            a = tree.keys()
+            for k in a:
+                for j in range(len(X[k])):
+                    if X[k][j] <= tree[k][0]:
+                        yhat.append(tree[k][1])
+                    else:
+                        yhat.append(tree[k][2])
+            pred.append(yhat)
+        for i in range(len(pred[0])):
+            d = {}
+            for j in range(len(pred)):
+                if pred[j][i] in d:
+                    d[pred[j][i]]+=1
+                else:
+                    d[pred[j][i]] = 1
+            y_hat.append(max(d,key=d.get))
+        y_hat = pd.Series(y_hat)
+        return y_hat
+
 
 
     def plot(self):

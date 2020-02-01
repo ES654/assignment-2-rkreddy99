@@ -1,4 +1,4 @@
-from .base import DecisionTree
+from sklearn.tree import DecisionTreeClassifier
 
 class RandomForestClassifier():
     def __init__(self, n_estimators=100, criterion='gini', max_depth=None):
@@ -8,9 +8,9 @@ class RandomForestClassifier():
         :param criterion: The function to measure the quality of a split.
         :param max_depth: The maximum depth of the tree.
         '''
-
-        pass
-
+        self.n_estimators = n_estimators
+        self.criterion = criterion
+        self.tree = DecisionTreeClassifier(criterion=self.criterion)
     def fit(self, X, y):
         """
         Function to train and construct the RandomForestClassifier

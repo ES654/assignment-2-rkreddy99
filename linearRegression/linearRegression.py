@@ -1,3 +1,4 @@
+import numpy as np
 
 class LinearRegression():
     def __init__(self, fit_intercept=True, method='normal'):
@@ -6,8 +7,9 @@ class LinearRegression():
         :param fit_intercept: Whether to calculate the intercept for this model. If set to False, no intercept will be used in calculations (i.e. data is expected to be centered).
         :param method:
         '''
-
-        pass
+        self.fit_intercept = fit_intercept
+        self.method = method
+        self.theta = 0
 
     def fit(self, X, y):
         '''
@@ -16,8 +18,13 @@ class LinearRegression():
         :param y: pd.Series with rows corresponding to output variable (shape of Y is N)
         :return:
         '''
+        X = X.to_numpy()
+        if self.fit_intercept:
+            a = np.ones((X.shape[0],1))
+            X = np.concatenate((a,X), axis=1)
+        inv = np.linalg.pinv(X.T @ X)
+        self.theta = inv @ X.T @ y
 
-        pass
 
     def predict(self, X):
         '''
@@ -25,8 +32,13 @@ class LinearRegression():
         :param X: pd.DataFrame with rows as samples and columns as features
         :return: y: pd.Series with rows corresponding to output variable. The output variable in a row is the prediction for sample in corresponding row in X.
         '''
-
-        pass
+        X = X.to_numpy()
+        if self.fit_intercept:
+            a = np.ones((X.shape[0],1))
+            X = np.concatenate((a,X), axis=1)
+        prediction = X @ self.theta
+        return prediction 
+        
 
     def plot_residuals(self):
         """
