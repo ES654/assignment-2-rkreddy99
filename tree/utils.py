@@ -44,8 +44,8 @@ def information_gain(X, attr, val):
     Outputs:
     > Return the information gain as a float
     """
-    Xd1 = X.loc[X[attr] <= val]
-    Xd2 = X.loc[X[attr] > val]
+    Xd1 = X.loc[X[attr] <= val].reset_index(drop=True)
+    Xd2 = X.loc[X[attr] > val].reset_index(drop=True)
     Y = list(X["output"])
     Y1 = list(Xd1["output"])
     Y2 = list(Xd2["output"])

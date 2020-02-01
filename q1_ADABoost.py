@@ -34,7 +34,7 @@ tree = DecisionTree(criterion=criteria)
 Classifier_AB = AdaBoostClassifier(base_estimator=tree, n_estimators=n_estimators )
 Classifier_AB.fit(X, y)
 y_hat = Classifier_AB.predict(X)
-# [fig1, fig2] = Classifier_AB.plot()
+#[fig1, fig2] = Classifier_AB.plot()
 print('Criteria :', criteria)
 print('Accuracy: ', accuracy(y_hat, y))
 for cls in y.unique():
@@ -72,8 +72,9 @@ for i in range(X["label"].size):
         X["label"][i] = "Iris-non-virginica"
 
 ind = [i for i in range(X.shape[0])]
+
 np.random.shuffle(ind)
-Xtemp = X
+Xtemp = X.copy()
 for i in range(len(ind)):
     X.loc[i] = Xtemp.loc[ind[i]]
 X = X.reset_index(drop=True)
@@ -85,16 +86,19 @@ X_train = X_train.drop(["label"], axis=1)
 
 X_test = X[90:].reset_index(drop=True)
 y_test = X_test["label"]
-X_train = X_test.drop(["label"], axis=1)
+X_test = X_test.drop(["label"], axis=1)
+
+n_estimators = 3
 
 criteria = 'information_gain'
 tree = DecisionTree(criterion=criteria)
 Classifier_AB = AdaBoostClassifier(base_estimator=tree, n_estimators=n_estimators )
 Classifier_AB.fit(X_train, y_train)
 y_hat = Classifier_AB.predict(X_test)
-# [fig1, fig2] = Classifier_AB.plot()
-print('Criteria :', criteria)
+#[fig1, fig2] = Classifier_AB.plot()
+print('***Criteria :'+str(criteria)+"***")
 print('Accuracy: ', accuracy(y_hat, y_test))
 for cls in y.unique():
+    print("***Class :"+str(cls)+"***")
     print('Precision: ', precision(y_hat, y_test, cls))
     print('Recall: ', recall(y_hat, y_test, cls))

@@ -33,12 +33,13 @@ class DecisionTree():
         y: pd.Series with rows corresponding to output variable (shape of Y is N)
         """
         h = list(X.columns)
-        X0, X1 = X[h[0]].sort_values(), X[h[1]].sort_values()
+        A = X.copy()
+        X0, X1 = A[h[0]].sort_values().reset_index(drop=True), A[h[1]].sort_values().reset_index(drop=True)
         s=[]
         l = len(X0)
-        N = X
+        N = X.copy()
         N["weight"] = W
-        N["output"] = list(y)
+        N["output"] = y
 
         for i in range(l-1):
             div = (X0[i] + X0[i+1])/2
@@ -50,20 +51,19 @@ class DecisionTree():
 
         div_ind = s.index(max(s))%(l-1) 
         div_attr = h[s.index(max(s))//(l-1)]
-
-        X_sort = X[div_attr].sort_values()
+        X_sort = A[div_attr].sort_values().reset_index(drop=True)
         div_val = (X_sort[div_ind] + X_sort[div_ind + 1])/2
         
-        Xd11 = N.loc[N[div_attr] <= div_val]
-        Xd22 = N.loc[N[div_attr] > div_val]
+        Xd11 = N.loc[N[div_attr] <= div_val].reset_index(drop=True)
+        Xd22 = N.loc[N[div_attr] > div_val].reset_index(drop=True)
 
         output1 = list(Xd11["output"])
         output2 = list(Xd22["output"])
-
         op1 = max(set(output1), key=output1.count)
         op2 = max(set(output2), key=output2.count)
 
         self.tree[div_attr] = [div_val, op1, op2]
+    
         return self.tree
     def predict(self, X):
         """

@@ -51,15 +51,16 @@ X_test = X_test.drop(["label"], axis=1)
 
 n_estimators = 100
 for criteria in ['entropy', 'gini']:
-    print('-----------------------------')
+    
     Classifier_RF = RandomForestClassifier(n_estimators=n_estimators, criterion = criteria, max_depth=None)
-    print(X_train,y_train)
+    
     Classifier_RF.fit(X_train, y_train)
     y_hat = Classifier_RF.predict(X_test)
     Classifier_RF.plot()
-    print('Criteria :', criteria)
-    print('-----------------------------')
+    print('***Criteria :'+str(criteria)+"***")
+  
     print('Accuracy: ', accuracy(y_hat, y_test))
     for cls in y.unique():
+        print("***Class :"+str(cls)+"***")
         print('Precision: ', precision(y_hat, y_test, cls))
         print('Recall: ', recall(y_hat, y_test, cls))
