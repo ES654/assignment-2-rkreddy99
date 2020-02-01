@@ -11,7 +11,7 @@ print("============================================================")
 print("Predicting on iris data")
 print("============================================================")
 
-X = pd.read_csv("iris.data")
+X = pd.read_csv("iris.data") 
 # 
 a = []
 for i in range(5):
