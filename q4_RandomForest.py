@@ -16,6 +16,9 @@ from tree.randomForest import RandomForestRegressor
 np.random.seed(42)
 
 ########### RandomForestClassifier ###################
+print("---------------------------------------")
+print("RandomForestClassifier on random data")
+print("---------------------------------------")
 
 N = 30
 P = 5
@@ -39,6 +42,9 @@ N = 30
 P = 5
 X = pd.DataFrame(np.random.randn(N, P))
 y = pd.Series(np.random.randn(N))
+print("---------------------------------------")
+print("RandomForestRegressor on random data")
+print("---------------------------------------")
 
 Regressor_RF = RandomForestRegressor(10, criterion = criteria)
 Regressor_RF.fit(X, y)

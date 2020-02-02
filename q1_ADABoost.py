@@ -20,7 +20,7 @@ np.random.seed(42)
 
 ########### AdaBoostClassifier on Real Input and Discrete Output ###################
 print("-----------------------------------------------------------")
-print("Predicting on random data")
+print("Adaboost on random data")
 print("-----------------------------------------------------------")
 N = 30
 P = 2
@@ -56,7 +56,7 @@ for cls in y.unique():
 
 ##### AdaBoostClassifier on Iris data set using the entire data set with sepal width and petal width as the two features
 print("-----------------------------------------------------------")
-print("Predicting on iris data")
+print("Adaboost on iris data")
 print("-----------------------------------------------------------")
 
 X = pd.read_csv("iris.data")
@@ -69,6 +69,7 @@ for i in range(5):
     a.append(float(X.columns[i]))
 col = ["sepal length", "sepal width", "petal length", "petal width", "label"]
 X.columns = col
+
 d={}
 for i in range(5):
   d[col[i]] = a[i]
@@ -77,10 +78,16 @@ X = X.append(d, ignore_index=True)
 X = X.drop(["sepal length"], axis=1)
 X = X.drop(["petal length"], axis=1)
 
+y = X['label'].copy()
+for i in range(y.size):
+    if y[i]!="Iris-virginica":
+        y[i] = "Iris-non-virginica"
 
-for i in range(X["label"].size):
-    if X["label"][i]!="Iris-virginica":
-        X["label"][i] = "Iris-non-virginica"
+X = X.drop(["label"], axis=1)
+X['label'] = y.copy()
+# for i in range(X["label"].size):
+#     if X["label"][i]!="Iris-virginica":
+#         X["label"][i] = "Iris-non-virginica"
 
 ind = [i for i in range(X.shape[0])]
 
