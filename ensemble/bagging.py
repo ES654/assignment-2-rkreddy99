@@ -11,6 +11,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
+np.random.seed(42)
 class BaggingClassifier():
     def __init__(self, base_estimator, n_estimators=100):
         '''
@@ -36,9 +37,11 @@ class BaggingClassifier():
             clone = copy.deepcopy(self.base_estimator)
             X1 = pd.DataFrame({}, columns = [i for i in X])
             y1 = pd.Series([])
+            ind1 = pd.Series([i for i in range(X.shape[0])]).sample(frac=1, replace=True, random_state=42).reset_index(drop=True)
+            # print(ind1)
             for j in range(X.shape[0]):
-                ind = random.randint(0,X.shape[0]-1)
-                X1.loc[j], y1.loc[j] = X.iloc[ind], y.iloc[ind]
+                # ind = np.random.randint(0,X.shape[0]-1)
+                X1.loc[j], y1.loc[j] = X.iloc[ind1[j]], y.iloc[ind1[j]]
             self.a.append(clone.fit(X1,y1))
 
     def predict(self, X):

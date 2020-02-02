@@ -4,7 +4,8 @@ import pandas as pd
 import numpy as np
 import copy
 import random
-
+np.random.seed(42)
+random.seed(42)
 class RandomForestClassifier():
     def __init__(self, n_estimators, criterion, max_depth):
         '''
@@ -30,7 +31,7 @@ class RandomForestClassifier():
             clone = copy.deepcopy(self.tree)
             Xtemp = X.copy()
             Xtemp['kljh'] = y.copy()
-            X1 = Xtemp.copy().sample(frac=1,replace=True).reset_index(drop=True)
+            X1 = Xtemp.copy().sample(frac=1,replace=True,random_state=42).reset_index(drop=True)
             y1 = X1['kljh'].copy()
             X1 = X1.drop(['kljh'], axis=1)
             col = list(X.columns)

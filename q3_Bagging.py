@@ -7,7 +7,7 @@ The current code given is for the Assignment 2.
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-
+np.random.seed(42)
 from metrics import *
 
 from ensemble.bagging import BaggingClassifier

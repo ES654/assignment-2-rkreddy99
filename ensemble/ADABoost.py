@@ -3,7 +3,7 @@ from tree.base import DecisionTree
 import pandas as pd
 import copy
 import numpy as np
-
+import matplotlib.pyplot as plt
 class AdaBoostClassifier():
     def __init__(self, base_estimator, n_estimators=3): # Optional Arguments: Type of estimator
         '''
@@ -16,6 +16,7 @@ class AdaBoostClassifier():
         self.n_estimators = n_estimators
         self.trees = []
         self.alph=[]
+        self.weight = []
 
     def fit(self, X, y):
         """
@@ -26,12 +27,17 @@ class AdaBoostClassifier():
         """
         l = X.shape[0]
         weights = [1/l]*l
-    
+        
         for i in range(self.n_estimators):
+            self.y1 = y.copy()
             clone = copy.deepcopy(self.base_estimator)
             tr = clone.fit(X,y,weights)
             y_hat = pd.Series(clone.predict(X))
             w=sum(weights)
+            self.df = list(X.columns)
+            self.x1 = X[self.df[0]].copy()
+            self.x2 = X[self.df[1]].copy()
+            self.weight.append(list(np.array(weights)*4000))
             assert(y_hat.size == y.size)
             indw = [] #wrongly predicted indices
             indt = [] #correctly predicted indices
@@ -90,8 +96,6 @@ class AdaBoostClassifier():
         y_hat = pd.Series(y_hat)
         return y_hat
 
-
-
     def plot(self):
         """
         Function to plot the decision surface for AdaBoostClassifier for each estimator(iteration).
@@ -106,5 +110,36 @@ class AdaBoostClassifier():
 
         This function should return [fig1, fig2]
         """
-        
-        pass
+        cla = list(self.y1.unique())
+        tree = self.trees
+        x1 = list(self.x1)
+        x2 = list(self.x2)
+        y1 = list(self.y1)
+        fig,axes = plt.subplots(1,self.n_estimators)
+        for ii in range(self.n_estimators):
+            a = []
+            b = []
+            c = []
+            d = []
+            w1 = []
+            w2 = []
+            for i in range(len(x1)):
+                if y1[i]==cla[0]:
+                    a.append(x1[i])
+                    b.append(x2[i])
+                    w1.append(self.weight[ii][i])
+                else:
+                    c.append(x1[i])
+                    d.append(x2[i])
+                    w2.append(self.weight[ii][i])
+            axes[ii].scatter(np.array(a), np.array(b), s=w1, c='#0001fb', edgecolors='k')
+            axes[ii].scatter(np.array(c), np.array(d), s=w2, c='#eb170a', edgecolors='k')
+            for i in tree[2*ii+1]:
+                if i == self.df[0]:
+                    axes[ii].axvspan(min(x1)-1,tree[2*ii+1][i][0],facecolor='#93b7d7',alpha=0.5)
+                    axes[ii].axvspan(tree[2*ii+1][i][0],max(x1)+1,facecolor='#db9397',alpha=0.5)
+                else:
+                    axes[ii].axhspan(min(x2)-1,tree[2*ii+1][i][0],facecolor='#93b7d7',alpha=0.5)
+                    axes[ii].axhspan(tree[2*ii+1][i][0],max(x2)+1,facecolor='#db9397',alpha=0.5)
+        plt.show()
+        return
