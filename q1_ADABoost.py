@@ -20,7 +20,7 @@ np.random.seed(42)
 
 ########### AdaBoostClassifier on Real Input and Discrete Output ###################
 print("-----------------------------------------------------------")
-print("Adaboost on random data")
+print("Decision stump on random data")
 print("-----------------------------------------------------------")
 N = 30
 P = 2
@@ -41,6 +41,11 @@ for cls in y.unique():
     print("***Class :"+str(cls)+"***")
     print('Precision: ', precision(yhat, y, cls))
     print('Recall: ', recall(yhat, y, cls))
+
+print("-----------------------------------------------------------")
+print("Adaboost on random data")
+print("-----------------------------------------------------------")
+
 Classifier_AB = AdaBoostClassifier(base_estimator=tree, n_estimators=n_estimators )
 Classifier_AB.fit(X, y)
 y_hat = Classifier_AB.predict(X)
