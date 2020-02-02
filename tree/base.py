@@ -57,10 +57,35 @@ class DecisionTree():
         Xd11 = N.loc[N[div_attr] <= div_val].reset_index(drop=True)
         Xd22 = N.loc[N[div_attr] > div_val].reset_index(drop=True)
 
-        output1 = list(Xd11["output"])
-        output2 = list(Xd22["output"])
-        op1 = max(set(output1), key=output1.count)
-        op2 = max(set(output2), key=output2.count)
+        output1 = list(Xd11["weight"].copy())
+        output2 = list(Xd22["weight"].copy())
+        out1 = list(Xd11["output"].copy())
+        out2 = list(Xd22["output"].copy())
+        oop1 = list(Xd11['output'].unique())
+        oop2 = list(Xd22['output'].unique())
+        max1=0
+        max2=0
+        for i in range(len(out1)):
+            if out1[i]==oop1[0]:
+                max1+=output1[i]
+            else:
+                max2+=output1[i]
+        if max1>max2:
+            op1 = oop1[0]
+        else:
+            op1 = oop1[1]
+        # op1 = max(set(output1), key=output1.count)
+        max1=0
+        max2=0
+        for i in range(len(out2)):
+            if out2[i]==oop2[0]:
+                max1+=output2[i]
+            else:
+                max2+=output2[i]
+        if max1>max2:
+            op2 = oop2[0]
+        else:
+            op2 = oop2[1]
 
         self.tree[div_attr] = [div_val, op1, op2]
     

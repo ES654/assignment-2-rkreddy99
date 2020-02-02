@@ -25,6 +25,8 @@ class AdaBoostClassifier():
         X: pd.DataFrame with rows as samples and columns as features (shape of X is N X P) where N is the number of samples and P is the number of columns.
         y: pd.Series with rows corresponding to output variable (shape of Y is N)
         """
+        self.X = X.copy()
+        self.y = y.copy()
         l = X.shape[0]
         weights = [1/l]*l
         
@@ -134,6 +136,8 @@ class AdaBoostClassifier():
                     w2.append(self.weight[ii][i])
             axes[ii].scatter(np.array(a), np.array(b), s=w1, c='#0001fb', edgecolors='k')
             axes[ii].scatter(np.array(c), np.array(d), s=w2, c='#eb170a', edgecolors='k')
+            axes[ii].set_xlim(min(x1)-0.25,max(x1)+0.25)
+            axes[ii].set_ylim(min(x2)-0.25,max(x2)+0.25)
             for i in tree[2*ii+1]:
                 if i == self.df[0]:
                     axes[ii].axvspan(min(x1)-1,tree[2*ii+1][i][0],facecolor='#93b7d7',alpha=0.5)
@@ -141,5 +145,42 @@ class AdaBoostClassifier():
                 else:
                     axes[ii].axhspan(min(x2)-1,tree[2*ii+1][i][0],facecolor='#93b7d7',alpha=0.5)
                     axes[ii].axhspan(tree[2*ii+1][i][0],max(x2)+1,facecolor='#db9397',alpha=0.5)
+                
         plt.show()
+        plt.close()
+
+        plot_colors = 'rb'
+        plot_step = 0.02
+        X = self.X.copy()
+        cols=X.columns
+        y = self.y.copy()
+        col = list(X.columns)
+        x_min, x_max = X.iloc[:, 0].min() - 1, X.iloc[:, 0].max() + 1
+        y_min, y_max = X.iloc[:, 1].min() - 1, X.iloc[:, 1].max() + 1
+        xx, yy = np.meshgrid(np.arange(x_min, x_max, plot_step),
+                            np.arange(y_min, y_max, plot_step))
+        plt.tight_layout(h_pad=0.5, w_pad=0.5, pad=2.5)
+        # clf = classifiers[i]
+        X_ = np.c_[xx.ravel(), yy.ravel()]
+        Z = self.predict(pd.DataFrame({cols[i]: pd.Series(X_[:,i]) for i in range(len(X_[0]))}))
+        Z = np.array(Z).reshape(xx.shape)
+        try:
+            cs = plt.contourf(xx, yy, Z, cmap=plt.cm.RdYlBu)
+        except:
+            for i in range(len(Z)):
+                Z[i] = [int(j=='Iris-virginica') for j in Z[i]]
+            cs = plt.contourf(xx, yy, Z, cmap=plt.cm.RdYlBu)
+
+        # plt.xlabel()
+        # plt.ylabel(iris.feature_names[pair[1]])
+        plt.title("Fig 2")
+
+        # Plot the training points
+        for cls, color in zip(np.unique(y), plot_colors):
+            # print(color)
+            # break
+            idx = np.where(y == cls)[0]
+            plt.scatter(X.iloc[idx, 0], X.iloc[idx, 1], c=color, cmap=plt.cm.RdYlBu, edgecolor='black', s=15)
+        plt.show()
+
         return
