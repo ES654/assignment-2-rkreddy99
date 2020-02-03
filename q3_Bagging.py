@@ -22,16 +22,16 @@ print("-------------------------------------------")
 N = 30
 P = 2
 NUM_OP_CLASSES = 2
-n_estimators = 3
+n_estimators = 5
 X = pd.DataFrame(np.abs(np.random.randn(N, P)))
 y = pd.Series(np.random.randint(NUM_OP_CLASSES, size = N), dtype="category")
 # print(X)
-tree = DecisionTreeClassifier(criterion="entropy",max_depth=1)
+tree = DecisionTreeClassifier(criterion="entropy",max_depth=None)
 Classifier_B = BaggingClassifier(base_estimator=tree, n_estimators=n_estimators )
 Classifier_B.fit(X, y)
 print(X.shape)
 y_hat = Classifier_B.predict(X)
-# [fig1, fig2] = Classifier_B.plot()
+Classifier_B.plot()
 print('Criteria : entropy')
 print('Accuracy: ', accuracy(y_hat, y))
 for cls in y.unique():
@@ -65,11 +65,11 @@ X = pd.DataFrame(df, columns = ['x1','x2','label'])
 y = X['label'].reset_index(drop=True)
 X = X.drop(['label'], axis=1).reset_index(drop=True)
 
-tree = DecisionTreeClassifier(criterion="entropy",max_depth=1)
+tree = DecisionTreeClassifier(criterion="entropy",max_depth=None)
 Classifier_B = BaggingClassifier(base_estimator=tree, n_estimators=n_estimators )
 Classifier_B.fit(X, y)
 y_hat = Classifier_B.predict(X)
-# [fig1, fig2] = Classifier_B.plot()
+Classifier_B.plot()
 print('Criteria : entropy')
 print('Accuracy: ', accuracy(y_hat, y))
 for cls in y.unique():

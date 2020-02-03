@@ -154,9 +154,9 @@ class AdaBoostClassifier():
         X = self.X.copy()
         cols=X.columns
         y = self.y.copy()
-        col = list(X.columns)
-        x_min, x_max = X.iloc[:, 0].min() - 1, X.iloc[:, 0].max() + 1
-        y_min, y_max = X.iloc[:, 1].min() - 1, X.iloc[:, 1].max() + 1
+        cols = list(X.columns)
+        x_min, x_max = X.iloc[:, 0].min() - 0.25, X.iloc[:, 0].max() + 0.25
+        y_min, y_max = X.iloc[:, 1].min() - 0.25, X.iloc[:, 1].max() + 0.25
         xx, yy = np.meshgrid(np.arange(x_min, x_max, plot_step),
                             np.arange(y_min, y_max, plot_step))
         plt.tight_layout(h_pad=0.5, w_pad=0.5, pad=2.5)
@@ -165,11 +165,11 @@ class AdaBoostClassifier():
         Z = self.predict(pd.DataFrame({cols[i]: pd.Series(X_[:,i]) for i in range(len(X_[0]))}))
         Z = np.array(Z).reshape(xx.shape)
         try:
-            cs = plt.contourf(xx, yy, Z, cmap=plt.cm.RdYlBu)
+            cs = plt.contourf(xx, yy, Z, cmap=plt.cm.PuOr)
         except:
             for i in range(len(Z)):
                 Z[i] = [int(j=='Iris-virginica') for j in Z[i]]
-            cs = plt.contourf(xx, yy, Z, cmap=plt.cm.RdYlBu)
+            cs = plt.contourf(xx, yy, Z, cmap=plt.cm.PuOr)
 
         # plt.xlabel()
         # plt.ylabel(iris.feature_names[pair[1]])
@@ -180,7 +180,7 @@ class AdaBoostClassifier():
             # print(color)
             # break
             idx = np.where(y == cls)[0]
-            plt.scatter(X.iloc[idx, 0], X.iloc[idx, 1], c=color, cmap=plt.cm.RdYlBu, edgecolor='black', s=15)
+            plt.scatter(X.iloc[idx, 0], X.iloc[idx, 1], c=color, cmap=plt.cm.PuOr, edgecolor='black', s=50)
         plt.show()
 
         return

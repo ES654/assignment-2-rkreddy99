@@ -1,5 +1,5 @@
 from sklearn.tree import DecisionTreeClassifier
-from linearRegression.linearRegression import LinearRegression
+from sklearn.tree import DecisionTreeRegressor
 import pandas as pd
 import numpy as np
 import copy
@@ -95,8 +95,8 @@ class RandomForestRegressor():
         self.n_estimators =n_estimators
         self.criterion = criterion
         self.max_depth = max_depth
-        self.fit_intercept = True
-        self.tree = LinearRegression(fit_intercept=self.fit_intercept, method='normal')
+        self.tree = DecisionTreeRegressor(criterion='mae')
+
 
     def fit(self, X, y):
         """
@@ -119,7 +119,8 @@ class RandomForestRegressor():
             attr = random.sample(col,num)
             self.node.append(attr)
             X2 = X[attr].copy()
-            self.a.append(clone.fit(X2,y1))
+            clone.fit(X2,y1)
+            self.a.append(clone)
 
     def predict(self, X):
         """
@@ -132,16 +133,12 @@ class RandomForestRegressor():
         pred = []
         y_hat = []
         tree = self.a
+        assert(len(self.node)==len(self.a))
         for i in range(len(self.node)):
             attr = self.node[i]
             X2 = X[attr].copy()
-            X2 = X2.to_numpy()
-            if self.fit_intercept:
-                a = np.ones((X2.shape[0],1))
-                X2 = np.concatenate((a,X2), axis=1)
-            pred.append(list(X2 @ tree[i]))
-        pred = np.array(pred)
-        y_hat = sum(pred)/len(self.node)
+            pred.append(list(tree[i].predict(X2)))
+        y_hat = sum(np.array(pred))/len(pred[0])
         y_hat = pd.Series(y_hat)
         return y_hat
 

@@ -1,5 +1,5 @@
 import numpy as np
-
+import matplotlib.pyplot as plt
 class LinearRegression():
     def __init__(self, fit_intercept=True, method='normal'):
         '''
@@ -18,6 +18,7 @@ class LinearRegression():
         :param y: pd.Series with rows corresponding to output variable (shape of Y is N)
         :return:
         '''
+        self.y1 = y
         X = X.to_numpy()
         if self.fit_intercept:
             a = np.ones((X.shape[0],1))
@@ -37,11 +38,11 @@ class LinearRegression():
         if self.fit_intercept:
             a = np.ones((X.shape[0],1))
             X = np.concatenate((a,X), axis=1)
-        prediction = X @ self.theta
-        return prediction 
+        self.prediction = X @ self.theta
+        return self.prediction 
         
 
-    def plot_residuals(self):
+    def plot_residuals(self,fold):
         """
         Function to plot the residuals for LinearRegression on the train set and the fit. This method can only be called when `fit` has been earlier invoked.
 
@@ -51,4 +52,27 @@ class LinearRegression():
         Column 3 plots a bar plot on a log scale showing the coefficients of the different features and the intercept term (\theta_i)
 
         """
-        pass
+        y_hat = np.array(self.prediction)
+        y = np.array(self.y1)
+        fig, (ax1,ax2, ax3) = plt.subplots(1,3)
+        y,y_hat = np.array(y),np.array(y_hat)
+        ax1.scatter(y,y_hat)
+        ax1.set_xlabel('y')
+        ax1.set_ylabel('y_hat')
+        ax1.set_title('y_hat vs y')
+        exp_data = y_hat-y
+        ax2.hist(exp_data, bins=len(exp_data), align='left', color='b', edgecolor='red',linewidth=1)
+        ax2.set_xlabel("Data points")
+        ax2.set_ylabel("Error")
+        ax2.set_title("Histogram of Residuals( "+'mean: '+str(round(np.mean(exp_data),4)) +' '+'variance: '+str(round(np.var(exp_data),4)) +')')
+        theta = self.theta
+        ax3.bar(['theta_'+str(i) for i in range(len(theta))],[abs(j) for j in theta])
+        ax3.set_yscale('log')
+        ax3.set_xlabel("Thetas")
+        ax3.set_ylabel("Coefficients of Theta")
+        ax3.set_title("Log scale bar plot of coefficients of thetas")
+        if fold!=-1:
+            plt.suptitle('Residual Plots of Linear Regression for fold: '+str(fold))
+        else:
+            plt.suptitle('Residual Plots of Linear Regression')
+        plt.show()

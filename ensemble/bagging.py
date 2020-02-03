@@ -32,16 +32,20 @@ class BaggingClassifier():
         """
         self.df = X.copy()
         self.ot = y.copy()
+        self.X = []
+        self.y = []
         self.a=[]
         for i in range(self.n_estimators):
             clone = copy.deepcopy(self.base_estimator)
             X1 = pd.DataFrame({}, columns = [i for i in X])
             y1 = pd.Series([])
-            ind1 = pd.Series([i for i in range(X.shape[0])]).sample(frac=1, replace=True, random_state=42).reset_index(drop=True)
+            ind1 = pd.Series([i for i in range(X.shape[0])]).sample(frac=1, replace=True).reset_index(drop=True)
             # print(ind1)
             for j in range(X.shape[0]):
                 # ind = np.random.randint(0,X.shape[0]-1)
                 X1.loc[j], y1.loc[j] = X.iloc[ind1[j]], y.iloc[ind1[j]]
+            self.X.append(X1.copy())
+            self.y.append(y1.copy())
             self.a.append(clone.fit(X1,y1))
 
     def predict(self, X):
@@ -81,90 +85,72 @@ class BaggingClassifier():
         This function should return [fig1, fig2]
 
         """
-        '''h = .02  # step size in the mesh
+        # X = self.X
+        # y = self.y
+        classifiers = [tem for tem in self.a]
+        alphas = ['iter'+str(i) for i in range(1,len(self.a)+1)]
+        
+        # print("in plot")
+        # print(np.unique(y, return_counts=True)[1])
+        for i in range(len(self.a)):
+            X = np.array(self.X[i])
+            y = np.array(self.y[i])
+            # n_classes = 3
+            plot_colors = 'rb'
+            plot_step = 0.02
 
-        names = ["Decision Tree"]
+            plt.subplot(1, len(alphas), i + 1)
+            
+            x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
+            y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+            xx, yy = np.meshgrid(np.arange(x_min, x_max, plot_step),
+                                np.arange(y_min, y_max, plot_step))
+            plt.tight_layout(h_pad=0.5, w_pad=0.5, pad=2.5)
+            clf = classifiers[i]
+            X_ = np.c_[xx.ravel(), yy.ravel()]
+            Z = clf.predict(pd.DataFrame({i: pd.Series(X_[:,i]) for i in range(len(X_[0]))}))
+            Z = np.array(Z).reshape(xx.shape)
+            cs = plt.contourf(xx, yy, Z, cmap=plt.cm.PuOr)
 
-        classifiers = [DecisionTreeClassifier(max_depth=1)]
+            plt.xlabel('x1')
+            plt.ylabel('x2')
+            plt.title(alphas[i])
 
-        df, ot = make_classification(n_features=2, n_redundant=0, n_informative=2,
-                                random_state=1, n_clusters_per_class=1)
-        # rng = np.random.RandomState(2)
-        # df += 2 * rng.uniform(size=df.shape)
-        linearly_separable = (df, ot)
+            for cls, color in zip(np.unique(y), plot_colors):
+                idx = np.where(y == cls)[0]
+                plt.scatter(X[idx, 0], X[idx, 1], c=color, s = 40, cmap=plt.cm.PuOr, edgecolor='black')
+        plt.show()
 
-        datasets = [make_moons(noise=0.3, random_state=0),
-                    make_circles(noise=0.2, factor=0.5, random_state=1),
-                    linearly_separable
-                    ]
+        plt.suptitle("Decision surface on bagged data")
+        plt.close()
 
-        figure = plt.figure(figsize=(27, 9))
-        i = 1
-        # iterate over datasets
-        for ds_cnt, ds in enumerate(datasets):
-            # preprocess dataset, split into training and test part
-            df, ot = ds
-            df = StandardScaler().fit_transform(df)
-            df_train, df_test, y_train, y_test = \
-                train_test_split(df, ot, test_size=.4, random_state=42)
+        plot_colors = 'rb'
+        plot_step = 0.02
 
-            x_min, x_max = df[:, 0].min() - .5, df[:, 0].max() + .5
-            y_min, y_max = df[:, 1].min() - .5, df[:, 1].max() + .5
-            xx, yy = np.meshgrid(np.arange(x_min, x_max, h),
-                                np.arange(y_min, y_max, h))
+        # plt.subplot(1, len(alphas), i + 1)
+        X = np.array(self.df)
+        y = np.array(self.ot)
+        
+        x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
+        y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+        xx, yy = np.meshgrid(np.arange(x_min, x_max, plot_step),
+                            np.arange(y_min, y_max, plot_step))
+        plt.tight_layout(h_pad=0.5, w_pad=0.5, pad=2.5)
+        # clf = classifiers[i]
+        X_ = np.c_[xx.ravel(), yy.ravel()]
+        Z = self.predict(pd.DataFrame({i: pd.Series(X_[:,i]) for i in range(len(X_[0]))}))
+        Z = np.array(Z).reshape(xx.shape)
+        cs = plt.contourf(xx, yy, Z, cmap=plt.cm.PuOr)
 
-            # just plot the dataset first
-            cm = plt.cm.RdBu
-            cm_bright = ListedColormap(['#FF0000', '#0000FF'])
-            ax = plt.subplot(len(datasets), len(classifiers) + 1, i)
-            if ds_cnt == 0:
-                ax.set_title("Input data")
-            # Plot the training points
-            ax.scatter(df_train[:, 0], df_train[:, 1], c=y_train, cmap=cm_bright,
-                    edgecolors='k')
-            # Plot the testing points
-            ax.scatter(df_test[:, 0], df_test[:, 1], c=y_test, cmap=cm_bright, alpha=0.6,
-                    edgecolors='k')
-            ax.set_xlim(xx.min(), xx.max())
-            ax.set_ylim(yy.min(), yy.max())
-            ax.set_xticks(())
-            ax.set_yticks(())
-            i += 1
+        plt.xlabel('x1')
+        plt.ylabel("x2")
+        plt.title("Ensemble of different estimators")
 
-            # iterate over classifiers
-            for name, clf in zip(names, classifiers):
-                ax = plt.subplot(len(datasets), len(classifiers) + 1, i)
-                clf.fit(df_train, y_train)
-                score = clf.score(df_test, y_test)
-
-                # Plot the decision boundary. For that, we will assign a color to each
-                # point in the mesh [x_min, x_max]x[y_min, y_max].
-                if hasattr(clf, "decision_function"):
-                    Z = clf.decision_function(np.c_[xx.ravel(), yy.ravel()])
-                else:
-                    Z = clf.predict_proba(np.c_[xx.ravel(), yy.ravel()])[:, 1]
-
-                # Put the result into a color plot
-                Z = Z.reshape(xx.shape)
-                ax.contourf(xx, yy, Z, cmap=cm, alpha=.8)
-
-                # Plot the training points
-                ax.scatter(df_train[:, 0], df_train[:, 1], c=y_train, cmap=cm_bright,
-                        edgecolors='k')
-                # Plot the testing points
-                ax.scatter(df_test[:, 0], df_test[:, 1], c=y_test, cmap=cm_bright,
-                        edgecolors='k', alpha=0.6)
-
-                ax.set_xlim(xx.min(), xx.max())
-                ax.set_ylim(yy.min(), yy.max())
-                ax.set_xticks(())
-                ax.set_yticks(())
-                if ds_cnt == 0:
-                    ax.set_title(name)
-                ax.text(xx.max() - .3, yy.min() + .3, ('%.2f' % score).lstrip('0'),
-                        size=15, horizontalalignment='right')
-                i += 1
-
-        plt.tight_layout()
-        plt.show()'''
-        pass
+        # Plot the training points
+        for cls, color in zip(np.unique(y), plot_colors):
+            # print(color)
+            # break
+            idx = np.where(y == cls)[0]
+            plt.scatter(X[idx, 0], X[idx, 1], c=color,cmap=plt.cm.PuOr, edgecolor='black', s=40)
+        plt.show()
+        
