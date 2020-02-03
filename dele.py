@@ -1,36 +1,67 @@
+"""
+The current code given is for the Assignment 2.
+> Classification
+> Regression
+"""
+
 import numpy as np
-import matplotlib
+import pandas as pd
 import matplotlib.pyplot as plt
 
-vegetables = [1000*i for i in range(1,6)]
-farmers = [100*i for i in range(1,6)]
-harvest = np.array([[0.8, 2.4, 2.5, 3.9, 0.0],
-                    [2.4, 0.0, 4.0, 1.0, 2.7],
-                    [1.1, 2.4, 0.8, 4.3, 1.9],
-                    [0.6, 0.0, 0.3, 0.0, 3.1],
-                    [0.7, 1.7, 0.6, 2.6, 2.2]])
+from metrics import *
+
+from ensemble.ADABoost import AdaBoostClassifier
+from tree.base import DecisionTree
+# Or you could import sklearn DecisionTree
+from linearRegression.linearRegression import LinearRegression
 
 
-fig, ax = plt.subplots()
-im = ax.imshow(harvest)
+np.random.seed(42)
 
-# We want to show all ticks...
-ax.set_xticks(np.arange(len(farmers)))
-ax.set_yticks(np.arange(len(vegetables)))
-# ... and label them with the respective list entries
-ax.set_xticklabels(farmers)
-ax.set_yticklabels(vegetables)
+X = pd.read_csv("iris.data")
+# 
+a = []
+for i in range(5):
+  if i==4:
+    a.append(X.columns[i])
+  else:
+    a.append(float(X.columns[i]))
+print(a)
+col = ["sepal length", "sepal width", "petal length", "petal width", "label"]
+X.columns = col
+# print(X)
+# d={}
+# for i in range(5):
+#   d[col[i]] = a[i]
+# X = X.append(d, ignore_index=True)
+X.loc[-1] = a
+X.index = X.index+1
+X = X.sort_index()
 
-# Rotate the tick labels and set their alignment.
-plt.setp(ax.get_xticklabels(), ha="right")
+X = X.drop(["sepal length"], axis=1)
+X = X.drop(["petal length"], axis=1)
+print(X)
+y = X['label'].copy()
+for i in range(y.size):
+    if y[i]!="Iris-virginica":
+        y[i] = "Iris-non-virginica"
 
-# Loop over data dimensions and create text annotations.
-for i in range(len(vegetables)):
-    for j in range(len(farmers)):
-        text = ax.text(j, i, harvest[i, j],
-                       ha="center", va="center", color="w")
+X = X.drop(["label"], axis=1)
+X['label'] = y.copy()
 
-ax.set_title("Harvest of local farmers (in tons/year)")
-ax.colorbar()
-fig.tight_layout()
-plt.show()
+ind = [i for i in range(X.shape[0])]
+
+np.random.shuffle(ind)
+Xtemp = X.copy()
+for i in range(len(ind)):
+    X.loc[i] = Xtemp.loc[ind[i]]
+X = X.reset_index(drop=True)
+y = X["label"]
+
+X_train = X.loc[:89].reset_index(drop=True)
+y_train = X_train["label"]
+X_train = X_train.drop(["label"], axis=1)
+
+X_test = X[90:].reset_index(drop=True)
+y_test = X_test["label"]
+X_test = X_test.drop(["label"], axis=1)

@@ -66,7 +66,10 @@ def recall(y_hat, y, cls):
             e+=1
         if y[i]==cls:
             r+=1
-    rec = e/r
+    try:
+        rec = e/r
+    except:
+        rec=0
     return rec
 
 def rmse(y_hat, y):

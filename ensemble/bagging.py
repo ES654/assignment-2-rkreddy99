@@ -88,7 +88,7 @@ class BaggingClassifier():
         # X = self.X
         # y = self.y
         classifiers = [tem for tem in self.a]
-        alphas = ['iter'+str(i) for i in range(1,len(self.a)+1)]
+        alphas = ['estimator '+str(i) for i in range(1,len(self.a)+1)]
         
         # print("in plot")
         # print(np.unique(y, return_counts=True)[1])
@@ -144,7 +144,7 @@ class BaggingClassifier():
 
         plt.xlabel('x1')
         plt.ylabel("x2")
-        plt.title("Ensemble of different estimators")
+        plt.title("Combined decision surface")
 
         # Plot the training points
         for cls, color in zip(np.unique(y), plot_colors):

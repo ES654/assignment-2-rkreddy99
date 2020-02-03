@@ -61,10 +61,6 @@ for cls in y.unique():
 
 
 ##### AdaBoostClassifier on Iris data set using the entire data set with sepal width and petal width as the two features
-print("-----------------------------------------------------------")
-print("Adaboost on iris data")
-print("-----------------------------------------------------------")
-
 X = pd.read_csv("iris.data")
 # 
 a = []
@@ -76,10 +72,9 @@ for i in range(5):
 col = ["sepal length", "sepal width", "petal length", "petal width", "label"]
 X.columns = col
 
-d={}
-for i in range(5):
-  d[col[i]] = a[i]
-X = X.append(d, ignore_index=True)
+X.loc[-1] = a
+X.index = X.index+1
+X = X.sort_index()
 
 X = X.drop(["sepal length"], axis=1)
 X = X.drop(["petal length"], axis=1)
@@ -91,16 +86,8 @@ for i in range(y.size):
 
 X = X.drop(["label"], axis=1)
 X['label'] = y.copy()
-# for i in range(X["label"].size):
-#     if X["label"][i]!="Iris-virginica":
-#         X["label"][i] = "Iris-non-virginica"
 
-ind = [i for i in range(X.shape[0])]
-
-np.random.shuffle(ind)
-Xtemp = X.copy()
-for i in range(len(ind)):
-    X.loc[i] = Xtemp.loc[ind[i]]
+X = X.sample(frac=1,random_state=42)
 X = X.reset_index(drop=True)
 y = X["label"]
 
@@ -111,6 +98,26 @@ X_train = X_train.drop(["label"], axis=1)
 X_test = X[90:].reset_index(drop=True)
 y_test = X_test["label"]
 X_test = X_test.drop(["label"], axis=1)
+print("-----------------------------------------------------------")
+print("Decision stump on IRIS data")
+print("-----------------------------------------------------------")
+
+criteria = 'information_gain'
+tree = DecisionTree(criterion=criteria)
+re = X_train.shape[0]
+img_weights = [1/re]*re
+tree.fit(X_train,y_train,img_weights)
+yhat = pd.Series(tree.predict(X_test))
+print('Criteria :', criteria)
+print('Accuracy: ', accuracy(yhat, y_test))
+for cls in y.unique():
+    print("***Class :"+str(cls)+"***")
+    print('Precision: ', precision(yhat, y_test, cls))
+    print('Recall: ', recall(yhat, y_test, cls))
+print("-----------------------------------------------------------")
+print("Adaboost on iris data")
+print("-----------------------------------------------------------")
+
 
 n_estimators = 3
 

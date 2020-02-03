@@ -39,6 +39,7 @@ class AdaBoostClassifier():
             self.df = list(X.columns)
             self.x1 = X[self.df[0]].copy()
             self.x2 = X[self.df[1]].copy()
+           
             self.weight.append(list(np.array(weights)*4000))
             assert(y_hat.size == y.size)
             indw = [] #wrongly predicted indices
@@ -138,14 +139,16 @@ class AdaBoostClassifier():
             axes[ii].scatter(np.array(c), np.array(d), s=w2, c='#eb170a', edgecolors='k')
             axes[ii].set_xlim(min(x1)-0.25,max(x1)+0.25)
             axes[ii].set_ylim(min(x2)-0.25,max(x2)+0.25)
+            axes[ii].set_xlabel("feature: "+str(self.df[0]))
+            axes[ii].set_ylabel("feature: "+str(self.df[1]))
+            axes[ii].set_title('alpha'+str(ii+1))
             for i in tree[2*ii+1]:
                 if i == self.df[0]:
                     axes[ii].axvspan(min(x1)-1,tree[2*ii+1][i][0],facecolor='#93b7d7',alpha=0.5)
                     axes[ii].axvspan(tree[2*ii+1][i][0],max(x1)+1,facecolor='#db9397',alpha=0.5)
                 else:
                     axes[ii].axhspan(min(x2)-1,tree[2*ii+1][i][0],facecolor='#93b7d7',alpha=0.5)
-                    axes[ii].axhspan(tree[2*ii+1][i][0],max(x2)+1,facecolor='#db9397',alpha=0.5)
-                
+                    axes[ii].axhspan(tree[2*ii+1][i][0],max(x2)+1,facecolor='#db9397',alpha=0.5)        
         plt.show()
         plt.close()
 
@@ -171,9 +174,10 @@ class AdaBoostClassifier():
                 Z[i] = [int(j=='Iris-virginica') for j in Z[i]]
             cs = plt.contourf(xx, yy, Z, cmap=plt.cm.PuOr)
 
-        # plt.xlabel()
-        # plt.ylabel(iris.feature_names[pair[1]])
-        plt.title("Fig 2")
+        plt.xlabel(("feature: "+str(self.df[0])))
+        plt.ylabel(("feature: "+str(self.df[1])))
+
+        plt.title("decision surface by combining the individual estimators")
 
         # Plot the training points
         for cls, color in zip(np.unique(y), plot_colors):
