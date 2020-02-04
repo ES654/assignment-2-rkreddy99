@@ -5,31 +5,19 @@ Onteddu Rama Krishna Reddy - 17110094
 
 
 > Write the answers for the subjective questions here
------------------------------------------------------------
-Decision stump on IRIS data
------------------------------------------------------------
-Criteria : Information Gain
-Accuracy : 0.9333
 
-Class :Iris-non-virginica
-Precision:  0.9 
-Recall:  1.0 
+The results of IRIS data with 60% train and 40% split data on respective classifiers.
 
-Class :Iris-virginica
-Precision:  1.0  
-Recall:  0.8333333333333334
+![pred values](Images\ada_pred.PNG)
 
+The printed list contains the values of alpha in each iteration.
 
------------------------------------------------------------
-Adaboost on IRIS data
------------------------------------------------------------
-Criteria : Information Gain
-Accuracy : 0.9333
+The results obtained are same in the case of decision stump and combination of adaboost trees because the weight associated (alpha) with the prediction of first tree is maximum and greater than the sum of other two.
 
-Class :Iris-non-virginica
-Precision:  0.9 
-Recall:  1.0 
+The decision surfaces learnt by individual estimators are shown below, with size based on weights.
 
-Class :Iris-virginica
-Precision:  1.0  
-Recall:  0.8333333333333334
+![decision surfaces](Images\adaIris_alpha.PNG)
+
+The decision surface learnt by the combination of all the estimators is shown below.
+
+![combination](Images\adaIris_comb.PNG)

@@ -25,28 +25,21 @@ X.columns = col
 X.loc[-1] = a
 X.index = X.index+1
 X = X.sort_index()
-
-X = X.drop(["sepal length"], axis=1)
-X = X.drop(["petal length"], axis=1)
-col = X["label"].unique()
-d = {}
-a = 1
-for i in col:
-    if i not in d:
-        d[i] = a
-        a+=1
+# col = X["label"].unique()
+# d = {}
+# a = 1
+# for i in col:
+#     if i not in d:
+#         d[i] = a
+#         a+=1
           
-print(d)          
-for i in range(X["label"].size):
-    if X["label"][i] in d:
-        X["label"][i] = d[X["label"][i]]
-
-print(X)
-ind = [i for i in range(X.shape[0])]
-np.random.shuffle(ind)
-Xtemp = X
-for i in range(len(ind)):
-    X.loc[i] = Xtemp.loc[ind[i]]
+# print(d)          
+# for i in range(X["label"].size):
+#     if X["label"][i] in d:
+#         X["label"][i] = d[X["label"][i]]
+# X = X.drop(["sepal length"], axis=1)
+# X = X.drop(["petal length"], axis=1)
+X = X.sample(frac=1,random_state=42)
 X = X.reset_index(drop=True)
 y = X["label"]
 
@@ -65,7 +58,7 @@ for criteria in ['entropy', 'gini']:
     
     Classifier_RF.fit(X_train, y_train)
     y_hat = Classifier_RF.predict(X_test)
-    # Classifier_RF.plot()
+    fig = Classifier_RF.plot()
     print('***Criteria :'+str(criteria)+"***")
   
     print('Accuracy: ', accuracy(y_hat, y_test))
@@ -73,3 +66,4 @@ for criteria in ['entropy', 'gini']:
         print("***Class :"+str(cls)+"***")
         print('Precision: ', precision(y_hat, y_test, cls))
         print('Recall: ', recall(y_hat, y_test, cls))
+# plt.show()

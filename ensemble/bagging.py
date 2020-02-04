@@ -4,13 +4,8 @@ import random
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from sklearn.datasets import make_moons, make_circles, make_classification
+from matplotlib import gridspec
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
-from sklearn.naive_bayes import GaussianNB
-from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 np.random.seed(42)
 class BaggingClassifier():
     def __init__(self, base_estimator, n_estimators=100):
@@ -87,46 +82,50 @@ class BaggingClassifier():
         """
         # X = self.X
         # y = self.y
+        # gs = gridspec.GridSpec(ncols=len(self.a), nrows=1, [5 for i in range(len(self.a))])
         classifiers = [tem for tem in self.a]
         alphas = ['estimator '+str(i) for i in range(1,len(self.a)+1)]
-        
+        fig, ax = plt.subplots(1,self.n_estimators,figsize=(17,3))
         # print("in plot")
         # print(np.unique(y, return_counts=True)[1])
         for i in range(len(self.a)):
+            co = list(self.X[i].columns)
             X = np.array(self.X[i])
             y = np.array(self.y[i])
             # n_classes = 3
             plot_colors = 'rb'
             plot_step = 0.02
-
-            plt.subplot(1, len(alphas), i + 1)
+            ax0 = ax[i]
+            # plt.subplot(1, len(alphas), i + 1)
             
             x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
             y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
             xx, yy = np.meshgrid(np.arange(x_min, x_max, plot_step),
                                 np.arange(y_min, y_max, plot_step))
-            plt.tight_layout(h_pad=0.5, w_pad=0.5, pad=2.5)
+            # plt.tight_layout(h_pad=0.5, w_pad=0.5, pad=2.5)
             clf = classifiers[i]
             X_ = np.c_[xx.ravel(), yy.ravel()]
             Z = clf.predict(pd.DataFrame({i: pd.Series(X_[:,i]) for i in range(len(X_[0]))}))
             Z = np.array(Z).reshape(xx.shape)
-            cs = plt.contourf(xx, yy, Z, cmap=plt.cm.PuOr)
+            cs = ax0.contourf(xx, yy, Z, cmap=plt.cm.PuOr)
 
-            plt.xlabel('x1')
-            plt.ylabel('x2')
-            plt.title(alphas[i])
+            ax0.set_xlabel("feature: "+str(co[0]))
+            ax0.set_ylabel("feature: "+str(co[1]))
+            ax0.set_title(alphas[i])
+        
 
             for cls, color in zip(np.unique(y), plot_colors):
                 idx = np.where(y == cls)[0]
-                plt.scatter(X[idx, 0], X[idx, 1], c=color, s = 40, cmap=plt.cm.PuOr, edgecolor='black')
-        plt.show()
+                ax0.scatter(X[idx, 0], X[idx, 1], c=color, s = 40, cmap=plt.cm.PuOr, edgecolor='black')
+        plt.tight_layout()
 
         plt.suptitle("Decision surface on bagged data")
-        plt.close()
+        # plt.show()
+        # plt.close()
 
         plot_colors = 'rb'
         plot_step = 0.02
-
+        fig2, ax = plt.subplots(1,1)
         # plt.subplot(1, len(alphas), i + 1)
         X = np.array(self.df)
         y = np.array(self.ot)
@@ -135,22 +134,22 @@ class BaggingClassifier():
         y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
         xx, yy = np.meshgrid(np.arange(x_min, x_max, plot_step),
                             np.arange(y_min, y_max, plot_step))
-        plt.tight_layout(h_pad=0.5, w_pad=0.5, pad=2.5)
+        
         # clf = classifiers[i]
         X_ = np.c_[xx.ravel(), yy.ravel()]
         Z = self.predict(pd.DataFrame({i: pd.Series(X_[:,i]) for i in range(len(X_[0]))}))
         Z = np.array(Z).reshape(xx.shape)
-        cs = plt.contourf(xx, yy, Z, cmap=plt.cm.PuOr)
+        cs = ax.contourf(xx, yy, Z, cmap=plt.cm.PuOr)
 
-        plt.xlabel('x1')
-        plt.ylabel("x2")
-        plt.title("Combined decision surface")
+        ax.set_xlabel("feature: "+str(co[0]))
+        ax.set_ylabel("feature: "+str(co[1]))
+        ax.set_title("Combined decision surface")
 
         # Plot the training points
         for cls, color in zip(np.unique(y), plot_colors):
             # print(color)
             # break
             idx = np.where(y == cls)[0]
-            plt.scatter(X[idx, 0], X[idx, 1], c=color,cmap=plt.cm.PuOr, edgecolor='black', s=40)
-        plt.show()
+            ax.scatter(X[idx, 0], X[idx, 1], c=color,cmap=plt.cm.PuOr, edgecolor='black', s=40)
         
+        return fig,fig2

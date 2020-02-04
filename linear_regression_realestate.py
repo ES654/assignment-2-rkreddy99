@@ -37,7 +37,7 @@ for fit_intercept in [True, False]:
         y_hat1 = LR.predict(Xtrain)
         y_hat = LR.predict(Xtest)
         LR.fit(Xtest,ytest)
-        LR.plot_residuals(fold = -1)
+        fig = LR.plot_residuals(i+1)
         print('-------------------------------')
         print('errors for fold '+str(i+1))
         print('-------------------------------')

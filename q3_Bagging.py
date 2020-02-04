@@ -31,7 +31,7 @@ Classifier_B = BaggingClassifier(base_estimator=tree, n_estimators=n_estimators 
 Classifier_B.fit(X, y)
 print(X.shape)
 y_hat = Classifier_B.predict(X)
-Classifier_B.plot()
+fig1, fig2 = Classifier_B.plot()
 print('Criteria : entropy')
 print('Accuracy: ', accuracy(y_hat, y))
 for cls in y.unique():
@@ -69,9 +69,11 @@ tree = DecisionTreeClassifier(criterion="entropy",max_depth=None)
 Classifier_B = BaggingClassifier(base_estimator=tree, n_estimators=n_estimators )
 Classifier_B.fit(X, y)
 y_hat = Classifier_B.predict(X)
-Classifier_B.plot()
+fig1, fig2 = Classifier_B.plot()
 print('Criteria : entropy')
 print('Accuracy: ', accuracy(y_hat, y))
 for cls in y.unique():
     print('Precision: ', precision(y_hat, y, cls))
     print('Recall: ', recall(y_hat, y, cls))
+
+#plt.show()

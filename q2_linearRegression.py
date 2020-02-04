@@ -129,7 +129,8 @@ for i in range(len(N)):
 
 ax.set_title("Estimated time(s), fit_intercept: False")
 fig.tight_layout()
-plt.show()
+
+
 
 N = 30
 P = 5
@@ -145,7 +146,9 @@ for fit_intercept in [True, False]:
     LR = LinearRegression(fit_intercept=fit_intercept)
     LR.fit(X, y)
     y_hat = LR.predict(X)
-    LR.plot_residuals(fold = 1)
+    fig1 = LR.plot_residuals(fold = -1)
 
     print('RMSE: ', rmse(y_hat, y))
     print('MAE: ', mae(y_hat, y))
+
+#plt.show("all")

@@ -23,13 +23,14 @@ print("---------------------------------------")
 N = 30
 P = 5
 X = pd.DataFrame(np.random.randn(N, P))
-y = pd.Series(np.random.randint(P, size = N), dtype="category")
-n_estimators = 10
+y = pd.Series(np.random.randint(3, size = N), dtype="category")
+n_estimators = 4
 for criteria in ['entropy', 'gini']:
     Classifier_RF = RandomForestClassifier(n_estimators=n_estimators, criterion = criteria, max_depth=None)
     Classifier_RF.fit(X, y)
     y_hat = Classifier_RF.predict(X)
-    # Classifier_RF.plot()
+    fig = Classifier_RF.plot()
+    
     print('Criteria :', criteria)
     print('Accuracy: ', accuracy(y_hat, y))
     for cls in y.unique():
@@ -53,3 +54,4 @@ y_hat = Regressor_RF.predict(X)
 print('Criteria : MAE' )
 print('RMSE: ', rmse(y_hat, y))
 print('MAE: ', mae(y_hat, y))
+#plt.show()
