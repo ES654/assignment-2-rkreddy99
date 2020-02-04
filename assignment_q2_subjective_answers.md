@@ -11,6 +11,10 @@ RMSE and MAE
 ---
 ![ad](Images/linRegPred.png)
 
+- Let N be the no. of rows (data samples) and P be the no. of columns.
+
+- The time complexity of linear regression is given by O(P*N\**2 + P**3)
+
 Comparision of time complexity (Observed vs Estimated )
 --
 ![tc](Images/linReg_time.png)

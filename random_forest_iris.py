@@ -10,36 +10,10 @@ np.random.seed(42)
 print("============================================================")
 print("Predicting on iris data")
 print("============================================================")
-
 X = pd.read_csv("iris.data") 
-# 
-a = []
-for i in range(5):
-  if i==4:
-    a.append(X.columns[i])
-  else:
-    a.append(float(X.columns[i]))
 col = ["sepal length", "sepal width", "petal length", "petal width", "label"]
 X.columns = col
-
-X.loc[-1] = a
-X.index = X.index+1
-X = X.sort_index()
-# col = X["label"].unique()
-# d = {}
-# a = 1
-# for i in col:
-#     if i not in d:
-#         d[i] = a
-#         a+=1
-          
-# print(d)          
-# for i in range(X["label"].size):
-#     if X["label"][i] in d:
-#         X["label"][i] = d[X["label"][i]]
-# X = X.drop(["sepal length"], axis=1)
-# X = X.drop(["petal length"], axis=1)
-X = X.sample(frac=1,random_state=42)
+X = X.sample(frac=1,random_state=40)
 X = X.reset_index(drop=True)
 y = X["label"]
 
@@ -66,4 +40,4 @@ for criteria in ['entropy', 'gini']:
         print("***Class :"+str(cls)+"***")
         print('Precision: ', precision(y_hat, y_test, cls))
         print('Recall: ', recall(y_hat, y_test, cls))
-plt.show()
+#plt.show()

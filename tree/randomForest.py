@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 import copy
 import random
+import matplotlib.colors as mcolors
 np.random.seed(42)
 random.seed(42)
 class RandomForestClassifier():
@@ -41,6 +42,7 @@ class RandomForestClassifier():
             y1 = X1['kljh'].copy()
             X1 = X1.drop(['kljh'], axis=1)
             col = list(X.columns)
+
             num = int(len(col)**0.5)
             attr = random.sample(col,num)
             self.node.append(attr)
@@ -145,38 +147,7 @@ class RandomForestClassifier():
                 ax[i].scatter(X[idx, 0], X[idx, 1], c=color, s = 40, cmap=plt.cm.PuOr, edgecolor='black')
         return fig
 
-        # plt.suptitle("Decision surface on bagged data")
-        # plt.close()
-
-        # plot_colors = 'rb'
-        # plot_step = 0.02
-
-        # # plt.subplot(1, len(alphas), i + 1)
-        # X = np.array(self.df)
-        # y = np.array(self.ot)
-        
-        # x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
-        # y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
-        # xx, yy = np.meshgrid(np.arange(x_min, x_max, plot_step),
-        #                     np.arange(y_min, y_max, plot_step))
-        # plt.tight_layout(h_pad=0.5, w_pad=0.5, pad=2.5)
-        # # clf = classifiers[i]
-        # X_ = np.c_[xx.ravel(), yy.ravel()]
-        # Z = self.predict(pd.DataFrame({i: pd.Series(X_[:,i]) for i in range(len(X_[0]))}))
-        # Z = np.array(Z).reshape(xx.shape)
-        # cs = plt.contourf(xx, yy, Z, cmap=plt.cm.PuOr)
-
-        # plt.xlabel('x1')
-        # plt.ylabel("x2")
-        # plt.title("Combined decision surface")
-
-        # # Plot the training points
-        # for cls, color in zip(np.unique(y), plot_colors):
-        #     # print(color)
-        #     # break
-        #     idx = np.where(y == cls)[0]
-        #     plt.scatter(X[idx, 0], X[idx, 1], c=color,cmap=plt.cm.PuOr, edgecolor='black', s=40)
-
+       
 
 
 class RandomForestRegressor():
@@ -200,6 +171,8 @@ class RandomForestRegressor():
         y: pd.Series with rows corresponding to output variable (shape of Y is N)
         """
         self.a=[]
+        self.df = X.copy()
+        self.ot = y.copy()
         self.node = []
         self.X = []
         self.y = []
@@ -238,6 +211,7 @@ class RandomForestRegressor():
             pred.append(list(tree[i].predict(X2)))
         y_hat = sum(np.array(pred))/len(pred[0])
         y_hat = pd.Series(y_hat)
+
         return y_hat
 
     def plot(self):
@@ -253,6 +227,51 @@ class RandomForestRegressor():
         3. Creates a figure showing the combined decision surface/prediction
 
         """
+        classifiers = [tem for tem in self.a]
+        alphas = ['estimator '+str(i) for i in range(1,len(self.a)+1)]
+        # for i in range(len(self.a)):
 
+        #     sklearn.tree.plot_tree(self.a[i])
+        #     plt.show()
+        #     plt.close()
+            
+        
+        fig, ax = plt.subplots(1,self.n_estimators,figsize=(17,3))
+        for i in range(len(self.a)):
+            X = np.array(self.X[i])
+            y = np.array(self.y[i])
 
-        pass
+            try:
+                if "Ïris" in list(y)[0]:
+                    plot_colors = 'rwb'
+            except:
+                plot_colors = list(pd.Series(mcolors.CSS4_COLORS).sample(frac=1,random_state=40))
+            # plot_colors = ['r','w','b','c','m','y','k','crimson','darkmagenta','g','teal']
+            plot_step = 0.02
+
+            x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
+            y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+            xx, yy = np.meshgrid(np.arange(x_min, x_max, plot_step),
+                                np.arange(y_min, y_max, plot_step))
+            clf = classifiers[i]
+            X_ = np.c_[xx.ravel(), yy.ravel()]
+            Z = list(clf.predict(pd.DataFrame({i: pd.Series(X_[:,i]) for i in range(len(X_[0]))})))
+            for j in range(len(Z)):
+                if Z[j]=='Iris-virginica':
+                    Z[j]= 3
+                elif Z[j]=='Iris-setosa':
+                    Z[j]=1
+                elif Z[j]=="Iris-versicolor":
+                    Z[j]=2
+        
+            Z = np.array(Z).reshape(xx.shape)      
+            ax[i].contourf(xx, yy, Z, cmap=plt.cm.PuOr)
+
+            ax[i].set_xlabel(self.node[i][0])
+            ax[i].set_ylabel(self.node[i][1])
+            ax[i].set_title(alphas[i])
+            for cls, color in zip(np.unique(y), plot_colors):
+            
+                idx = np.where(y == cls)[0]
+                ax[i].scatter(X[idx, 0], X[idx, 1], c=color, s = 40, cmap=plt.cm.PuOr, edgecolor='black')
+        return fig
