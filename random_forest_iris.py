@@ -66,4 +66,4 @@ for criteria in ['entropy', 'gini']:
         print("***Class :"+str(cls)+"***")
         print('Precision: ', precision(y_hat, y_test, cls))
         print('Recall: ', recall(y_hat, y_test, cls))
-# plt.show()
+plt.show()

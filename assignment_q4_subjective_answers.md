@@ -68,4 +68,4 @@ The following are the images of the learnt trees and decision surfaces learnt by
 
   - Decision Surface learnt individually
 
- ![as](Images\tr1.png)
+ ![as](Images\tr2.png)
