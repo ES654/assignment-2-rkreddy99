@@ -14,7 +14,7 @@ Iris Dataset
 Results Obtained
 ---
 
-![as](Images\rf.png)
+![as](Images/rf.png)
 
 The following are the images of the learnt trees and decision surfaces learnt by each of them.
 
@@ -22,50 +22,50 @@ The following are the images of the learnt trees and decision surfaces learnt by
 
  - Tree 1
 
- ![as](Images\tr11.png)
+ ![as](Images/tr11.png)
 
  - Tree 2
 
- ![as](Images\tr12.png)
+ ![as](Images/tr12.png)
 
  - Tree 3
 
- ![as](Images\tr13.png)
+ ![as](Images/tr13.png)
 
  - Tree 4
 
- ![as](Images\tr14.png)
+ ![as](Images/tr14.png)
 
  - Tree 5
 
- ![as](Images\tr15.png)
+ ![as](Images/tr15.png)
 
  - Decision Surface learnt individually
 
- ![as](Images\tr1.png)
+ ![as](Images/tr1.png)
 
     Criteria: Gini Index
 
   - Tree 1
 
- ![as](Images\tr21.png)
+ ![as](Images/tr21.png)
 
  - Tree 2
 
- ![as](Images\tr22.png)
+ ![as](Images/tr22.png)
 
  - Tree 3
 
- ![as](Images\tr23.png)
+ ![as](Images/tr23.png)
 
  - Tree 4
 
- ![as](Images\tr24.png)
+ ![as](Images/tr24.png)
 
  - Tree 5
 
- ![as](Images\tr25.png)
+ ![as](Images/tr25.png)
 
   - Decision Surface learnt individually
 
- ![as](Images\tr2.png)
+ ![as](Images/tr2.png)

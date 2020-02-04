@@ -8,23 +8,23 @@ Bagging on Random Data
 --
 
     Individual Estimators 
-![qw](Images\bar.png)
+![qw](Images/bar.png)
 
     Combination of Estimators
-![qw](Images\bac.png)
+![qw](Images/bac.png)
 
 ---
 ---
 Bagging on Data from Lecture
 ---
     Individual Estimators
-![qw](Images\bl.png)
+![qw](Images/bl.png)
 
     Combination of Estimators
-![qw](Images\bc.png)
+![qw](Images/bc.png)
 
 ---
 ---
 Results on random data and lecture from data
 ---
-![qw](Images\bPred.PNG)
+![qw](Images/bPred.PNG)
