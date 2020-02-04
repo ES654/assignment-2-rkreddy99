@@ -120,12 +120,13 @@ class RandomForestClassifier():
             X_ = np.c_[xx.ravel(), yy.ravel()]
             Z = list(clf.predict(pd.DataFrame({i: pd.Series(X_[:,i]) for i in range(len(X_[0]))})))
             
+        
             for j in range(len(Z)):
                 if Z[j]=='Iris-virginica':
                     Z[j]= 3
                 elif Z[j]=='Iris-setosa':
                     Z[j]=1
-                else:
+                elif Z[j]=="Iris-versicolor":
                     Z[j]=2
         
             Z = np.array(Z).reshape(xx.shape)
