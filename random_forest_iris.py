@@ -32,7 +32,7 @@ for criteria in ['entropy', 'gini']:
     
     Classifier_RF.fit(X_train, y_train)
     y_hat = Classifier_RF.predict(X_test)
-    fig = Classifier_RF.plot()
+    fig, fig2 = Classifier_RF.plot()
     print('***Criteria :'+str(criteria)+"***")
   
     print('Accuracy: ', accuracy(y_hat, y_test))

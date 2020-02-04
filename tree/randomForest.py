@@ -62,10 +62,14 @@ class RandomForestClassifier():
         pred = []
         y_hat = []
         tree = self.a
+        self.co = list(X.columns)
         assert(len(self.node)==len(self.a))
         for i in range(len(self.node)):
             attr = self.node[i]
-            X2 = X[attr].copy()
+            try:
+                X2 = X[attr].copy()
+            except:
+                X2 = X[[self.co[0],self.co[1]]].copy()
             pred.append(list(tree[i].predict(X2)))
         for i in range(len(pred[0])):
             d = {}
@@ -108,7 +112,11 @@ class RandomForestClassifier():
             X = np.array(self.X[i])
             y = np.array(self.y[i])
             # n_classes = 3
-            plot_colors = 'rwb'
+            try:
+                if "Iris" in list(y)[0]:
+                    plot_colors = 'rwb'
+            except:
+                plot_colors = ["r","w","b"]+list(pd.Series(mcolors.CSS4_COLORS).sample(frac=1,random_state=40))
             plot_step = 0.02
 
             # plt.subplot(1, len(alphas), i + 1)
@@ -145,7 +153,51 @@ class RandomForestClassifier():
             
                 idx = np.where(y == cls)[0]
                 ax[i].scatter(X[idx, 0], X[idx, 1], c=color, s = 40, cmap=plt.cm.PuOr, edgecolor='black')
-        return fig
+       
+        try:
+            if "Iris" in list(y)[0]:
+                plot_colors = 'rwb'
+        except:
+            plot_colors = ["r","w","b"]+list(pd.Series(mcolors.CSS4_COLORS).sample(frac=1,random_state=40))
+        plot_step = 0.02
+        fig2, ax = plt.subplots(1,1)
+        # plt.subplot(1, len(alphas), i + 1)
+        X = np.array(self.df)
+        y = np.array(self.ot)
+        
+        x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
+        y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+        xx, yy = np.meshgrid(np.arange(x_min, x_max, plot_step),
+                            np.arange(y_min, y_max, plot_step))
+        
+        # clf = classifiers[i]
+        X_ = np.c_[xx.ravel(), yy.ravel()]
+        Z = list(self.predict(pd.DataFrame({i: pd.Series(X_[:,i]) for i in range(len(X_[0]))})))    
+        for j in range(len(Z)):
+            if Z[j]=='Iris-virginica':
+                Z[j]= 3
+            elif Z[j]=='Iris-setosa':
+                Z[j]=1
+            elif Z[j]=="Iris-versicolor":
+                Z[j]=2
+    
+        Z = np.array(Z).reshape(xx.shape)
+        cs = ax.contourf(xx, yy, Z, cmap=plt.cm.PuOr)
+
+        ax.set_xlabel("feature: "+str(self.co[0]))
+        ax.set_ylabel("feature: "+str(self.co[1]))
+        ax.set_title("Combined decision surface")
+
+        # Plot the training points
+        for cls, color in zip(np.unique(y), plot_colors):
+            # print(color)
+            # break
+            idx = np.where(y == cls)[0]
+            ax.scatter(X[idx, 0], X[idx, 1], c=color,cmap=plt.cm.PuOr, edgecolor='black', s=40)
+        # plt.show()
+        return fig,fig2
+       
+   
 
        
 
@@ -204,10 +256,14 @@ class RandomForestRegressor():
         pred = []
         y_hat = []
         tree = self.a
+        self.co = list(X.columns)
         assert(len(self.node)==len(self.a))
         for i in range(len(self.node)):
             attr = self.node[i]
-            X2 = X[attr].copy()
+            try:
+                X2 = X[attr].copy()
+            except:
+                X2 = X[[self.co[0],self.co[1]]].copy()
             pred.append(list(tree[i].predict(X2)))
         y_hat = sum(np.array(pred))/len(pred[0])
         y_hat = pd.Series(y_hat)
@@ -234,18 +290,17 @@ class RandomForestRegressor():
         #     sklearn.tree.plot_tree(self.a[i])
         #     plt.show()
         #     plt.close()
-            
-        
+    
         fig, ax = plt.subplots(1,self.n_estimators,figsize=(17,3))
         for i in range(len(self.a)):
             X = np.array(self.X[i])
             y = np.array(self.y[i])
 
             try:
-                if "Ïris" in list(y)[0]:
+                if "Iris" in list(y)[0]:
                     plot_colors = 'rwb'
             except:
-                plot_colors = list(pd.Series(mcolors.CSS4_COLORS).sample(frac=1,random_state=40))
+                plot_colors = ["r","w","b"]+list(pd.Series(mcolors.CSS4_COLORS).sample(frac=1,random_state=40))
             # plot_colors = ['r','w','b','c','m','y','k','crimson','darkmagenta','g','teal']
             plot_step = 0.02
 
@@ -274,4 +329,42 @@ class RandomForestRegressor():
             
                 idx = np.where(y == cls)[0]
                 ax[i].scatter(X[idx, 0], X[idx, 1], c=color, s = 40, cmap=plt.cm.PuOr, edgecolor='black')
-        return fig
+                plt.suptitle("Individual Estimator")
+        # plt.show()
+        # plt.close()
+
+        try:
+            if "Iris" in list(y)[0]:
+                plot_colors = 'rwb'
+        except:
+            plot_colors = ["r","w","b"]+list(pd.Series(mcolors.CSS4_COLORS).sample(frac=1,random_state=40))
+        plot_step = 0.02
+        fig2, ax = plt.subplots(1,1)
+        # plt.subplot(1, len(alphas), i + 1)
+        X = np.array(self.df)
+        y = np.array(self.ot)
+        
+        x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
+        y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+        xx, yy = np.meshgrid(np.arange(x_min, x_max, plot_step),
+                            np.arange(y_min, y_max, plot_step))
+        
+        # clf = classifiers[i]
+        X_ = np.c_[xx.ravel(), yy.ravel()]
+        Z = self.predict(pd.DataFrame({i: pd.Series(X_[:,i]) for i in range(len(X_[0]))}))
+        Z = np.array(Z).reshape(xx.shape)
+        cs = ax.contourf(xx, yy, Z, cmap=plt.cm.PuOr)
+
+        ax.set_xlabel("feature: "+str(self.co[0]))
+        ax.set_ylabel("feature: "+str(self.co[1]))
+        ax.set_title("Combined decision surface")
+
+        # Plot the training points
+        for cls, color in zip(np.unique(y), plot_colors):
+            # print(color)
+            # break
+            idx = np.where(y == cls)[0]
+            ax.scatter(X[idx, 0], X[idx, 1], c=color,cmap=plt.cm.PuOr, edgecolor='black', s=40)
+        # plt.show()
+        return fig,fig2
+
