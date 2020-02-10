@@ -37,7 +37,7 @@ for cls in y.unique():
     print('Precision: ', precision(y_hat, y, cls))
     print('Recall: ', recall(y_hat, y, cls))
 
-
+plt.show()
 print("-------------------------------------------")
 print("Bagging on data from lecture")
 print("-------------------------------------------")
@@ -75,4 +75,4 @@ for cls in y.unique():
     print('Precision: ', precision(y_hat, y, cls))
     print('Recall: ', recall(y_hat, y, cls))
 
-#plt.show()
+plt.show()

@@ -36,7 +36,7 @@ for criteria in ['entropy', 'gini']:
     for cls in y.unique():
         print('Precision: ', precision(y_hat, y, cls))
         print('Recall: ', recall(y_hat, y, cls))
-# plt.show()
+plt.show()
 ########### RandomForestRegressor ###################
 
 N = 30
@@ -54,4 +54,4 @@ fig, fig2 = Regressor_RF.plot()
 print('Criteria : MAE' )
 print('RMSE: ', rmse(y_hat, y))
 print('MAE: ', mae(y_hat, y))
-# plt.show()
+plt.show()

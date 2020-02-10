@@ -56,7 +56,7 @@ for cls in y.unique():
     print("***Class :"+str(cls)+"***")
     print('Precision: ', precision(y_hat, y, cls))
     print('Recall: ', recall(y_hat, y, cls))
-
+plt.show()
 
 ##### AdaBoostClassifier on Iris data set using the entire data set with sepal width and petal width as the two features
 X = pd.read_csv("iris.data")
@@ -131,3 +131,5 @@ for cls in y.unique():
     print("***Class :"+str(cls)+"***")
     print('Precision: ', precision(y_hat, y_test, cls))
     print('Recall: ', recall(y_hat, y_test, cls))
+
+plt.show()

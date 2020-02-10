@@ -44,3 +44,4 @@ for fit_intercept in [True, False]:
         y_hat = pd.Series(y_hat)
         print('MAE on train data : ', mae(y_hat1, ytrain))
         print('MAE on test data : ', mae(y_hat, ytest))
+plt.show()
